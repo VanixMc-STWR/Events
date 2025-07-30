@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.Default;
 import org.bukkit.entity.Player;
 
 @CommandAlias("starevents|sevents|ste")
-public class eventscommand extends BaseCommand {
+public class EventsCommand extends BaseCommand {
 
     @Default
     public void onRunCommand(Player player) {

@@ -1,6 +1,6 @@
 package com.vanixmc.events;
 
-import com.vanixmc.events.commands.eventscommand;
+import com.vanixmc.events.commands.EventsCommand;
 import co.aikar.commands.BukkitCommandManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,7 +10,7 @@ public final class EventsPlugin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
-        commandManager.registerCommand(new eventscommand());
+        commandManager.registerCommand(new EventsCommand());
     }
 
     @Override
