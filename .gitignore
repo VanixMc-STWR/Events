@@ -34,3 +34,5 @@ replay_pid*
 /target/maven-archiver/pom.properties
 /stwr-events.iml
 /.idea/vcs.xml
+/target/test-classes/actions.yml
+/.idea/uiDesigner.xml
