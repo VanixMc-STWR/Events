@@ -87,7 +87,7 @@ public class Chat {
         return getString(strings, delimiter);
     }
 
-    public static String listToCommaSeperatedStringNoSpace(List<?> strings) {
+    public static String listToCommaSeparatedStringNoSpace(List<?> strings) {
         String delimiter = ",";
 
         return getString(strings, delimiter);
