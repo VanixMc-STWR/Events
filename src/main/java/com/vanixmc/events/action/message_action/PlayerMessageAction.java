@@ -43,7 +43,7 @@ public class PlayerMessageAction implements Action {
         if (player == null) throw new RuntimeException("Player null in event context.");
 
         if (format == MessageFormat.TITLE) {
-            player.sendTitle(message, subtitle, fadeInTicks, stayTicks, fadeInTicks);
+            player.sendTitle(message, subtitle, fadeInTicks, stayTicks, fadeOutTicks);
             return;
         }
         Chat.tell(player, format, message);
