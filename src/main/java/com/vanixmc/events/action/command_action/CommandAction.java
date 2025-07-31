@@ -2,7 +2,7 @@ package com.vanixmc.events.action.command_action;
 
 import com.vanixmc.events.action.Action;
 import com.vanixmc.events.action.ActionBuilder;
-import com.vanixmc.events.event.EventContext;
+import com.vanixmc.events.event.domain.EventContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
