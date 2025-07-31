@@ -1,10 +1,10 @@
-package com.vanixmc.events.event;
+package com.vanixmc.events.event.zone_event;
 
 import com.vanixmc.events.action.ActionHolder;
 import com.vanixmc.events.condition.ConditionHolder;
+import com.vanixmc.events.event.domain.AbstractEvent;
 
 public class ZoneEvent extends AbstractEvent {
-
     private final String regionId;
 
     public ZoneEvent(String id, String regionId, ConditionHolder conditionHolder, ActionHolder actionHolder) {
