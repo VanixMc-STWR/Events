@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActionHolder {
-    private final List<EventAction> actions;
+    private final List<Action> actions;
 
-    public ActionHolder(EventAction... eventActions) {
-        this.actions = new ArrayList<>(List.of(eventActions));
+    public ActionHolder(Action... actions) {
+        this.actions = new ArrayList<>(List.of(actions));
     }
 }

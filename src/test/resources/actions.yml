@@ -1,0 +1,20 @@
+# Reusable actions
+actions:
+  reward-base:
+    type: player_message
+    format: chat
+    message: "Hello World!"
+
+  rare-reward:
+    id: reward-base
+    message: "Hello, Rare World!!"
+
+  epic-reward:
+    id: rare-reward
+    message: "Hello, Epic World!!!"  # Overrides currency, inherits from rare-reward which inherited from reward-base
+
+  command-test:
+    type: command
+    sender: player
+    command: "gmc"
+
