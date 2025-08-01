@@ -38,4 +38,18 @@ public class RegionUtils {
 
         return region.contains(wgLocationPos);
     }
+
+    public static boolean isLocationInRegion(String worldName, Location location, String regionId) {
+
+        ProtectedRegion region = getRegionById(worldName, regionId);
+
+        if (region == null) return false;
+
+        //  adapt location to WorldEdit 3D coordinate.
+        BlockVector3 wgLocationPos = BukkitAdapter.asBlockVector(location);
+
+        if (wgLocationPos == null) return false;
+
+        return region.contains(wgLocationPos);
+    }
 }
