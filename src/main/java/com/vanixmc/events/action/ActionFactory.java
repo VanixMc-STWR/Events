@@ -1,8 +1,6 @@
 package com.vanixmc.events.action;
 
 import com.vanixmc.events.action.command_action.CommandAction;
-import com.vanixmc.events.action.command_action.CommandSender;
-import com.vanixmc.events.action.message_action.MessageFormat;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
 import lombok.Getter;
 
@@ -44,37 +42,9 @@ public class ActionFactory {
     }
 
     public void registerAllActionTypes() {
-        // Register player message loading
-        register(ActionType.PLAYER_MESSAGE, config -> {
-            MessageFormat format = MessageFormat.valueOf(config.getUppercaseString("format"));
-            String message = config.getString("message");
-
-            if (format == MessageFormat.TITLE) {
-                String subtitle = config.getString("subtitle");
-                Integer fadeInTicks = config.getInt("fadeInTicks");
-                Integer fadeOutTicks = config.getInt("fadeOutTicks");
-                Integer stayTicks = config.getInt("stayTicks");
-
-                if ((fadeInTicks != null || fadeOutTicks != null || stayTicks != null) &&
-                        (fadeInTicks == null || fadeOutTicks == null || stayTicks == null)) {
-                    System.out.println("Warning: If one of fadeInTicks, fadeOutTicks, or stayTicks is set, all must be set.");
-                    return new PlayerMessageAction(format, message, subtitle);
-                } else {
-                    return new PlayerMessageAction(format, message, subtitle, fadeInTicks, fadeOutTicks, stayTicks);
-                }
-            }
-            return new PlayerMessageAction(format, message);
-        });
-
-        // Register command action
-        register(ActionType.COMMAND, config -> {
-            CommandSender sender = CommandSender.valueOf(config.getUppercaseString("sender"));
-            String command = config.getString("command");
-            if (command.isEmpty()) {
-                throw new IllegalArgumentException("Command cannot be null or empty.");
-            }
-            return new CommandAction(sender, command);
-        });
+        // Register action builders for all action types
+        register(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
+        register(ActionType.COMMAND, CommandAction.builder());
     }
 
     /**

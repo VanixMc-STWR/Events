@@ -1,6 +1,7 @@
 package com.vanixmc.events.action.message_action;
 
 import com.vanixmc.events.action.Action;
+import com.vanixmc.events.action.ActionBuilder;
 import com.vanixmc.events.event.EventContext;
 import com.vanixmc.events.utils.Chat;
 import lombok.Getter;
@@ -47,5 +48,28 @@ public class PlayerMessageAction implements Action {
             return;
         }
         Chat.tell(player, format, message);
+    }
+
+    public static ActionBuilder builder() {
+        return config -> {
+            MessageFormat format = MessageFormat.valueOf(config.getUppercaseString("format"));
+            String message = config.getString("message");
+
+            if (format == MessageFormat.TITLE) {
+                String subtitle = config.getString("subtitle");
+                Integer fadeInTicks = config.getInt("fadeInTicks");
+                Integer fadeOutTicks = config.getInt("fadeOutTicks");
+                Integer stayTicks = config.getInt("stayTicks");
+
+                if ((fadeInTicks != null || fadeOutTicks != null || stayTicks != null) &&
+                        (fadeInTicks == null || fadeOutTicks == null || stayTicks == null)) {
+                    System.out.println("Warning: If one of fadeInTicks, fadeOutTicks, or stayTicks is set, all must be set.");
+                    return new PlayerMessageAction(format, message, subtitle);
+                } else {
+                    return new PlayerMessageAction(format, message, subtitle, fadeInTicks, fadeOutTicks, stayTicks);
+                }
+            }
+            return new PlayerMessageAction(format, message);
+        };
     }
 }

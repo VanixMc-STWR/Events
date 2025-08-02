@@ -1,6 +1,7 @@
 package com.vanixmc.events.action.command_action;
 
 import com.vanixmc.events.action.Action;
+import com.vanixmc.events.action.ActionBuilder;
 import com.vanixmc.events.event.EventContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +28,16 @@ public class CommandAction implements Action {
             }
             case CONSOLE -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
         }
+    }
+
+    public static ActionBuilder builder() {
+        return config -> {
+            CommandSender sender = CommandSender.valueOf(config.getUppercaseString("sender"));
+            String command = config.getString("command");
+            if (command.isEmpty()) {
+                throw new IllegalArgumentException("Command cannot be null or empty.");
+            }
+            return new CommandAction(sender, command);
+        };
     }
 }
