@@ -41,3 +41,4 @@ replay_pid*
 /target/dependency-reduced-pom.xml
 /target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
 /target/surefire-reports/TEST-com.vanixmc.events.ActionLoadTest.xml
+/target/test-classes/test-event.yml
