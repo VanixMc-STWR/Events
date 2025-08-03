@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ActionFactory {
-    private final Map<ActionType, ActionMeta> registry;
+    private final Map<ActionType, ActionBuilder> registry;
     @Getter
     private final LinkedHashMap<String, Action> reusableActions;
 
@@ -19,7 +19,7 @@ public class ActionFactory {
     }
 
     public void register(ActionType type, ActionBuilder builder) {
-        registry.put(type, new ActionMeta(type, builder));
+        registry.put(type, builder);
     }
 
     public void registerAll(Map<String, Map<String, Object>> actions) {
@@ -33,12 +33,12 @@ public class ActionFactory {
     public Action create(String key, Map<String, Map<String, Object>> actions) {
         ActionConfig config = resolveConfig(key, actions);
         ActionType type = ActionType.valueOf(config.getUppercaseString("type"));
-        ActionMeta meta = registry.get(type);
+        ActionBuilder builder = registry.get(type);
 
-        if (meta == null) {
+        if (builder == null) {
             throw new IllegalArgumentException("Unknown action type: " + type);
         }
-        return meta.create(config);
+        return builder.build(config);
     }
 
     public void registerAllActionTypes() {
