@@ -17,4 +17,3 @@ actions:
     type: command
     sender: player
     command: "gmc"
-

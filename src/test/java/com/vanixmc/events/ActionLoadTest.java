@@ -23,7 +23,7 @@ public class ActionLoadTest {
 
     @BeforeEach
     public void initFactory() {
-        this.actionFactory = new ActionFactory(Map.of());
+        this.actionFactory = new ActionFactory();
         actionFactory.registerAllActionTypes();
     }
 
@@ -45,7 +45,7 @@ public class ActionLoadTest {
             System.out.println(action);
         }
         System.out.println(actionsList);
-        System.out.println(actionFactory.getReusableActions());
+        System.out.println(actionFactory.getRegistry());
 
         for (int i = 0; i < actionsList.size(); i++) {
             if (i == 0) {

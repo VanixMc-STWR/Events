@@ -1,7 +1,7 @@
 package com.vanixmc.events.event.domain;
 
 import com.vanixmc.events.action.domain.ActionHolder;
-import com.vanixmc.events.condition.ConditionHolder;
+import com.vanixmc.events.condition.domain.ConditionHolder;
 import lombok.ToString;
 
 @ToString
