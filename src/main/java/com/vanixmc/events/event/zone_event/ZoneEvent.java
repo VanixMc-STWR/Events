@@ -2,9 +2,11 @@ package com.vanixmc.events.event.zone_event;
 
 import com.vanixmc.events.action.factory.ActionFactory;
 import com.vanixmc.events.action.domain.ActionHolder;
-import com.vanixmc.events.condition.ConditionHolder;
+import com.vanixmc.events.condition.domain.ConditionHolder;
+import com.vanixmc.events.condition.factory.ConditionFactory;
 import com.vanixmc.events.event.domain.AbstractEvent;
-import com.vanixmc.events.event.domain.EventBuilder;
+import com.vanixmc.events.event.domain.Event;
+import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.Getter;
 
 import java.util.List;
@@ -28,12 +30,13 @@ public class ZoneEvent extends AbstractEvent {
         return false;
     }
 
-    public static EventBuilder build(String id, ActionFactory actionFactory) {
+    public static ConfigBuilder<Event> build(String id, ActionFactory actionFactory, ConditionFactory conditionFactory) {
         return config -> {
             String regionId = config.getString("region-id");
+            List<Object> conditions = config.getObjectList("conditions");
             List<Object> actions = config.getObjectList("actions");
 
-            return new ZoneEvent(id, regionId, new ConditionHolder(),
+            return new ZoneEvent(id, regionId, conditionFactory.createConditionHolder(conditions),
                     actionFactory.createActionHolder(actions));
         };
     }

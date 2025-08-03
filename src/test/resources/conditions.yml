@@ -1,0 +1,10 @@
+# Reusable conditions
+conditions:
+  player-has-perms:
+    type: permission
+    permission: "events.use"
+
+  test2:
+    type: permission
+    permission: "events.use2"
+

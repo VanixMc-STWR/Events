@@ -1,8 +1,8 @@
 package com.vanixmc.events.action.message_action;
 
 import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.action.domain.ActionBuilder;
 import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.Chat;
 import lombok.Getter;
 import lombok.ToString;
@@ -40,7 +40,7 @@ public class PlayerMessageAction implements Action {
 
     @Override
     public void execute(EventContext context) {
-        Player player = context.getPlayer();
+        Player player = context.player();
         if (player == null) throw new RuntimeException("Player null in event context.");
 
         if (format == MessageFormat.TITLE) {
@@ -50,7 +50,7 @@ public class PlayerMessageAction implements Action {
         Chat.tell(player, format, message);
     }
 
-    public static ActionBuilder builder() {
+    public static ConfigBuilder<Action> builder() {
         return config -> {
             MessageFormat format = MessageFormat.valueOf(config.getUppercaseString("format"));
             String message = config.getString("message");

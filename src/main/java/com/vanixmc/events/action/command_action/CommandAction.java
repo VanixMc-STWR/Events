@@ -1,8 +1,8 @@
 package com.vanixmc.events.action.command_action;
 
 import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.action.domain.ActionBuilder;
 import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,7 +20,7 @@ public class CommandAction implements Action {
     public void execute(EventContext context) {
         switch (commandSender) {
             case PLAYER -> {
-                Player player = context.getPlayer();
+                Player player = context.player();
                 if (player == null)
                     throw new RuntimeException("Player is null in context. (ActionCommand with " + commandSender + " command sender)");
 
@@ -30,7 +30,7 @@ public class CommandAction implements Action {
         }
     }
 
-    public static ActionBuilder builder() {
+    public static ConfigBuilder<Action> builder() {
         return config -> {
             CommandSender sender = CommandSender.valueOf(config.getUppercaseString("sender"));
             String command = config.getString("command");

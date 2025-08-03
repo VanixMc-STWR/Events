@@ -1,6 +1,10 @@
 type: zone
 region-id: "test"
 trigger: on_enter
+conditions:
+  - id: player-has-perms and test2
+  - type: permission
+    permission: "test.perm"
 actions:
   - id: epic-reward
   - type: player_message

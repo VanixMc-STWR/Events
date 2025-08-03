@@ -2,42 +2,41 @@ package com.vanixmc.events.action.factory;
 
 import com.vanixmc.events.action.command_action.CommandAction;
 import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.action.domain.ActionBuilder;
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
+import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
 import lombok.Getter;
 
 import java.util.*;
 
 public class ActionFactory {
-    private final Map<ActionType, ActionBuilder> registry;
+    private final Map<ActionType, ConfigBuilder<Action>> builders;
 
     @Getter
-    private final LinkedHashMap<String, Action> reusableActions;
+    private final HashMap<String, Action> registry;
 
-    public ActionFactory(Map<String, Action> reusableActions) {
+    public ActionFactory() {
+        this.builders = new HashMap<>();
         this.registry = new HashMap<>();
-        this.reusableActions = new LinkedHashMap<>(reusableActions);
     }
 
-    public void register(ActionType type, ActionBuilder builder) {
-        registry.put(type, builder);
+    public void registerBuilder(ActionType type, ConfigBuilder<Action> builder) {
+        builders.put(type, builder);
     }
 
     public void registerAll(Map<String, Map<String, Object>> actions) {
         for (String key : actions.keySet()) {
             Action action = create(key, actions);
-            reusableActions.put(key, action);
+            registry.put(key, action);
         }
-        System.out.println(reusableActions);
     }
 
     public Action create(String key, Map<String, Map<String, Object>> actions) {
-        DomainConfig config = resolveConfig(key, actions);
+        DomainConfig config = ConfigBuilder.resolveConfig(key, actions);
         ActionType type = ActionType.valueOf(config.getUppercaseString("type"));
-        ActionBuilder builder = registry.get(type);
+        ConfigBuilder<Action> builder = builders.get(type);
 
         if (builder == null) {
             throw new IllegalArgumentException("Unknown action type: " + type);
@@ -47,36 +46,8 @@ public class ActionFactory {
 
     public void registerAllActionTypes() {
         // Register action builders for all action types
-        register(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
-        register(ActionType.COMMAND, CommandAction.builder());
-    }
-
-    /**
-     * Recursively resolves inheritance for actions by merging parent and child configurations.
-     * If the action has an "id" key, it inherits from the parent action with that id.
-     * Child properties override parent properties.
-     *
-     * @param key     the action key to resolve
-     * @param actions the map of all actions
-     * @return the merged ActionConfig
-     */
-    private DomainConfig resolveConfig(String key, Map<String, Map<String, Object>> actions) {
-        Map<String, Object> raw = new HashMap<>(actions.get(key));
-        if (raw.containsKey("id")) {
-            // Inherit from parent action
-            String parentId = (String) raw.get("id");
-            DomainConfig parent = resolveConfig(parentId, actions);
-            Map<String, Object> parentMap = new HashMap<>(parent.getConfig());
-            parentMap.putAll(raw); // Child overrides parent
-            DomainConfig merged = new DomainConfig();
-            merged.getConfig().putAll(parentMap);
-            return merged;
-        } else {
-            // No inheritance, just use raw config
-            DomainConfig config = new DomainConfig();
-            config.getConfig().putAll(raw);
-            return config;
-        }
+        registerBuilder(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
+        registerBuilder(ActionType.COMMAND, CommandAction.builder());
     }
 
     public ActionHolder createActionHolder(List<Object> actions) {
@@ -90,7 +61,7 @@ public class ActionFactory {
                 // Reference by id
                 if (actionData.containsKey("id") && actionData.size() == 1) {
                     String id = (String) actionData.get("id");
-                    Action reusable = reusableActions.get(id);
+                    Action reusable = registry.get(id);
                     if (reusable == null) {
                         throw new IllegalArgumentException("Unknown reusable action: " + id);
                     }
