@@ -1,4 +1,4 @@
-package com.vanixmc.events.utils;
+package com.vanixmc.events.util;
 
 import com.vanixmc.events.action.message_action.MessageFormat;
 import net.md_5.bungee.api.ChatMessageType;
