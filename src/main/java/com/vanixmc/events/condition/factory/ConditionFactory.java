@@ -9,8 +9,6 @@ import com.vanixmc.events.shared.DomainConfig;
 import lombok.Getter;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ConditionFactory {
     private final Map<ConditionType, ConfigBuilder<Condition>> builders;
@@ -79,11 +77,6 @@ public class ConditionFactory {
     }
 
     private Condition parseCompositeId(String id) {
-        // Handle expressions with parentheses first
-        if (id.contains("(")) {
-            return parseExpressionWithParentheses(id);
-        }
-
         String[] andParts = id.split("\\s+and\\s+");
 
         if (andParts.length > 1) {
@@ -97,11 +90,6 @@ public class ConditionFactory {
     }
 
     private Condition parseOrComposite(String part) {
-        // Handle expressions with parentheses first
-        if (part.contains("(")) {
-            return parseExpressionWithParentheses(part);
-        }
-
         String[] orParts = part.split("\\s+or\\s+");
 
         if (orParts.length > 1) {
@@ -113,90 +101,6 @@ public class ConditionFactory {
         }
 
         return resolveSingleId(part.trim());
-    }
-
-    private Condition parseExpressionWithParentheses(String expression) {
-        // First handle the innermost parentheses
-        Pattern pattern = Pattern.compile("\\(([^()]+)\\)");
-        Matcher matcher = pattern.matcher(expression);
-
-        StringBuilder sb = new StringBuilder();
-        Map<String, Condition> placeholders = new HashMap<>();
-
-        while (matcher.find()) {
-            String innerExpression = matcher.group(1);
-            Condition innerResult = parseCompositeId(innerExpression);
-
-            // Create a placeholder for this result
-            String placeholder = "__PLACEHOLDER_" + placeholders.size() + "__";
-            placeholders.put(placeholder, innerResult);
-
-            // Replace the parenthesized expression with the placeholder
-            matcher.appendReplacement(sb, placeholder);
-        }
-        matcher.appendTail(sb);
-
-        String simplifiedExpression = sb.toString();
-
-        // If there are still parentheses, it means we have nested parentheses
-        if (simplifiedExpression.contains("(")) {
-            Condition nestedResult = parseExpressionWithParentheses(simplifiedExpression);
-
-            // Replace all placeholders in the result (if any)
-            return replaceConditionPlaceholders(nestedResult, placeholders);
-        }
-
-        // Process the simplified expression (with placeholders)
-        Condition result = parseExpressionWithPlaceholders(simplifiedExpression, placeholders);
-
-        return result;
-    }
-
-    private Condition parseExpressionWithPlaceholders(String expression, Map<String, Condition> placeholders) {
-        // Split by 'and' first (higher precedence)
-        String[] andParts = expression.split("\\s+and\\s+");
-
-        if (andParts.length > 1) {
-            // Process each part and combine with AND
-            return Arrays.stream(andParts)
-                    .map(part -> parseOrExpressionWithPlaceholders(part, placeholders))
-                    .reduce(Condition::and)
-                    .orElseThrow();
-        }
-
-        // Only one part or no 'and' found, process as OR expression
-        return parseOrExpressionWithPlaceholders(expression, placeholders);
-    }
-
-    private Condition parseOrExpressionWithPlaceholders(String expression, Map<String, Condition> placeholders) {
-        String[] orParts = expression.split("\\s+or\\s+");
-
-        if (orParts.length > 1) {
-            // Process each part and combine with OR
-            return Arrays.stream(orParts)
-                    .map(part -> resolveTermWithPlaceholders(part.trim(), placeholders))
-                    .reduce(Condition::or)
-                    .orElseThrow();
-        }
-
-        // Only one term
-        return resolveTermWithPlaceholders(expression.trim(), placeholders);
-    }
-
-    private Condition resolveTermWithPlaceholders(String term, Map<String, Condition> placeholders) {
-        // Check if it's a placeholder
-        if (placeholders.containsKey(term)) {
-            return placeholders.get(term);
-        }
-
-        // Otherwise, it's a regular condition ID
-        return resolveSingleId(term);
-    }
-
-    private Condition replaceConditionPlaceholders(Condition condition, Map<String, Condition> placeholders) {
-        // This is a simplified implementation assuming we don't need to actually
-        // replace placeholders inside complex conditions
-        return condition;
     }
 
     private Condition resolveSingleId(String id) {
