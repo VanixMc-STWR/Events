@@ -1,8 +1,11 @@
 package com.vanixmc.events.condition;
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 public class ConditionHolder {
     private final List<EventCondition> conditions;
 

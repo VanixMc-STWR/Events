@@ -61,9 +61,7 @@ public class PlayerMessageAction implements Action {
                 Integer fadeOutTicks = config.getInt("fadeOutTicks");
                 Integer stayTicks = config.getInt("stayTicks");
 
-                if ((fadeInTicks != null || fadeOutTicks != null || stayTicks != null) &&
-                        (fadeInTicks == null || fadeOutTicks == null || stayTicks == null)) {
-                    System.out.println("Warning: If one of fadeInTicks, fadeOutTicks, or stayTicks is set, all must be set.");
+                if (fadeInTicks == null || fadeOutTicks == null || stayTicks == null) {
                     return new PlayerMessageAction(format, message, subtitle);
                 } else {
                     return new PlayerMessageAction(format, message, subtitle, fadeInTicks, fadeOutTicks, stayTicks);

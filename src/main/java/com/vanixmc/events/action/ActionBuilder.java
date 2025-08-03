@@ -1,6 +1,8 @@
 package com.vanixmc.events.action;
 
+import com.vanixmc.events.shared.DomainConfig;
+
 @FunctionalInterface
 public interface ActionBuilder {
-    Action build(ActionConfig config);
+    Action build(DomainConfig config);
 }
