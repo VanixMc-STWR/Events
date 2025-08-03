@@ -1,4 +1,4 @@
-package com.vanixmc.events.event;
+package com.vanixmc.events.event.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

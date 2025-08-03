@@ -1,17 +1,19 @@
-package com.vanixmc.events.action;
+package com.vanixmc.events.shared;
 
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
 @ToString
-public class ActionConfig {
+public class DomainConfig {
     private final Map<String, Object> config;
 
-    public ActionConfig() {
+    public DomainConfig() {
         config = new HashMap<>();
     }
 
@@ -47,5 +49,13 @@ public class ActionConfig {
     public Boolean getBoolean(String key) {
         Object value = config.get(key);
         return value instanceof Boolean ? (Boolean) value : null;
+    }
+
+    public List<Object> getObjectList(String key) {
+        Object value = config.get(key);
+        if (value instanceof List) {
+            return (List<Object>) value;
+        }
+        return Collections.emptyList();
     }
 }

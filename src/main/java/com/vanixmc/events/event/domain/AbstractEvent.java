@@ -1,8 +1,10 @@
-package com.vanixmc.events.event;
+package com.vanixmc.events.event.domain;
 
 import com.vanixmc.events.action.ActionHolder;
 import com.vanixmc.events.condition.ConditionHolder;
+import lombok.ToString;
 
+@ToString
 public abstract class AbstractEvent implements Event {
     private final String id;
     private final ConditionHolder conditionHolder;

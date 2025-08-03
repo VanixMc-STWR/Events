@@ -1,0 +1,8 @@
+type: zone
+region-id: "test"
+trigger: on_enter
+actions:
+  - id: epic-reward
+  - type: player_message
+    format: title
+    message: "You've entered the region!"
