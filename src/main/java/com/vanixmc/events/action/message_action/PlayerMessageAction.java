@@ -1,7 +1,7 @@
 package com.vanixmc.events.action.message_action;
 
-import com.vanixmc.events.action.Action;
-import com.vanixmc.events.action.ActionBuilder;
+import com.vanixmc.events.action.domain.Action;
+import com.vanixmc.events.action.domain.ActionBuilder;
 import com.vanixmc.events.event.domain.EventContext;
 import com.vanixmc.events.utils.Chat;
 import lombok.Getter;

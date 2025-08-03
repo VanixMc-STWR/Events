@@ -1,4 +1,4 @@
-package com.vanixmc.events.action;
+package com.vanixmc.events.action.domain;
 
 import com.vanixmc.events.event.domain.EventContext;
 

@@ -1,4 +1,4 @@
-package com.vanixmc.events.action;
+package com.vanixmc.events.action.domain;
 
 import lombok.Getter;
 import lombok.ToString;

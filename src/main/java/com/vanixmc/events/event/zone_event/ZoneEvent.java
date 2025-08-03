@@ -1,7 +1,7 @@
 package com.vanixmc.events.event.zone_event;
 
-import com.vanixmc.events.action.ActionFactory;
-import com.vanixmc.events.action.ActionHolder;
+import com.vanixmc.events.action.factory.ActionFactory;
+import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.condition.ConditionHolder;
 import com.vanixmc.events.event.domain.AbstractEvent;
 import com.vanixmc.events.event.domain.EventBuilder;
@@ -10,7 +10,6 @@ import lombok.ToString;
 
 import java.util.List;
 
-@ToString
 @Getter
 public class ZoneEvent extends AbstractEvent {
     private final String regionId;

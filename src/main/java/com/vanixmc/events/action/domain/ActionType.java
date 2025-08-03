@@ -1,4 +1,4 @@
-package com.vanixmc.events.action;
+package com.vanixmc.events.action.domain;
 
 public enum ActionType {
     PLAYER_MESSAGE,

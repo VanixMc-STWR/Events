@@ -1,6 +1,10 @@
-package com.vanixmc.events.action;
+package com.vanixmc.events.action.factory;
 
 import com.vanixmc.events.action.command_action.CommandAction;
+import com.vanixmc.events.action.domain.Action;
+import com.vanixmc.events.action.domain.ActionBuilder;
+import com.vanixmc.events.action.domain.ActionHolder;
+import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
 import com.vanixmc.events.shared.DomainConfig;
 import lombok.Getter;

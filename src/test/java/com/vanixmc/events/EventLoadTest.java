@@ -1,8 +1,8 @@
 package com.vanixmc.events;
 
-import com.vanixmc.events.action.Action;
-import com.vanixmc.events.action.ActionFactory;
-import com.vanixmc.events.action.ActionHolder;
+import com.vanixmc.events.action.domain.Action;
+import com.vanixmc.events.action.factory.ActionFactory;
+import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.action.message_action.MessageFormat;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
 import com.vanixmc.events.event.domain.Event;
