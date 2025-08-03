@@ -4,52 +4,54 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.Objects;
+import java.util.Optional;
+
 public class RegionUtils {
 
-    public static ProtectedRegion getRegionById(String worldName, String regionId) {
-        //  convert bukkit world to worldguard world
-        //  to use region features of API.
-        World bukkitWorld = Bukkit.getWorld(worldName);
-        if (bukkitWorld == null) return null;
+    public static Optional<ProtectedRegion> getRegionById(String worldName, String regionId) {
+        return Optional.ofNullable(Bukkit.getWorld(worldName))
+                //  use BukkitAdapter to convert Bukkit world object to
+                //  WorldGuard object.
+                .map(BukkitAdapter::adapt)
+                //  Get RegionManager via instance of RegionContainer from
+                //  WorldGuard world.
+                .map(wgWorld -> WorldGuard.getInstance()
+                        .getPlatform().getRegionContainer().get(wgWorld))
+                //  return region via regionId.
+                .map(regionManager -> regionManager.getRegion(regionId));
+    }
 
-        com.sk89q.worldedit.world.World wgWorld = BukkitAdapter.adapt(bukkitWorld);
+    public static Optional<ProtectedRegion> getRegionById(World world, String regionId) {
+        return Optional.ofNullable(world)
+                .map(BukkitAdapter::adapt)
+                .map(wgWorld -> WorldGuard.getInstance()
+                        .getPlatform().getRegionContainer().get(wgWorld))
+                //  return region via regionId.
+                .map(regionManager -> regionManager.getRegion(regionId));
+    }
 
-        //  Acquire region manager for given world and return region
-        //  for given ID.
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager regionManager = container.get(wgWorld);
-        if (regionManager == null) return null;
-
-        return regionManager.getRegion(regionId);
+    public static boolean isLocationInRegion(Location location, String regionId) {
+        return getRegionById(Objects.requireNonNull(location.getWorld()),
+                regionId)
+                //  Given the ProtectedRegion determine if the
+                //  corresponding block vector to the location exists
+                //  in region.
+                .map(region ->
+                        region.contains(BukkitAdapter.asBlockVector(location)))
+                .orElse(false);
     }
 
     public static boolean isLocationInRegion(Location location, Region region) {
-        //  adapt location to WorldEdit 3D coordinate.
-        BlockVector3 wgLocationPos = BukkitAdapter.asBlockVector(location);
-
-        if (wgLocationPos == null) return false;
-
-        return region.contains(wgLocationPos);
-    }
-
-    public static boolean isLocationInRegion(String worldName, Location location, String regionId) {
-
-        ProtectedRegion region = getRegionById(worldName, regionId);
-
-        if (region == null) return false;
-
-        //  adapt location to WorldEdit 3D coordinate.
-        BlockVector3 wgLocationPos = BukkitAdapter.asBlockVector(location);
-
-        if (wgLocationPos == null) return false;
-
-        return region.contains(wgLocationPos);
+        return Optional.ofNullable(location)
+                .map(BukkitAdapter::asBlockVector)
+                .filter(pos -> region != null)
+                .map(region::contains)
+                .orElse(false);
     }
 }
