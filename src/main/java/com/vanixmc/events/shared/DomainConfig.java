@@ -58,4 +58,12 @@ public class DomainConfig {
         }
         return Collections.emptyList();
     }
+
+    public List<String> getStringList(String key) {
+        Object value = config.get(key);
+        if (value instanceof List) {
+            return (List<String>) value;
+        }
+        return Collections.emptyList();
+    }
 }
