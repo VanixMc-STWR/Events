@@ -4,7 +4,9 @@ import co.aikar.commands.BukkitCommandManager;
 import com.vanixmc.events.action.factory.ActionFactory;
 import com.vanixmc.events.commands.EventsCommand;
 import com.vanixmc.events.condition.factory.ConditionFactory;
-import com.vanixmc.events.event.registry.EventRegistry;
+import com.vanixmc.events.event.factory.EventFactory;
+import com.vanixmc.events.trigger.factory.TriggerFactory;
+import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,18 +14,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class EventsPlugin extends JavaPlugin {
 
     @Getter
-    public static EventsPlugin instance;
-    private EventRegistry eventRegistry;
+    private static EventsPlugin instance;
+    private EventFactory eventFactory;
     private ConditionFactory conditionFactory;
     private ActionFactory actionFactory;
+    private TriggerModeFactory triggerModeFactory;
+    private TriggerFactory triggerFactory;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        this.triggerModeFactory = new TriggerModeFactory();
+        this.triggerFactory = new TriggerFactory();
         this.conditionFactory = new ConditionFactory();
         this.actionFactory = new ActionFactory();
-        this.eventRegistry = new EventRegistry();
+        this.eventFactory = new EventFactory();
 
         // Plugin startup logic
         BukkitCommandManager commandManager = new BukkitCommandManager(this);

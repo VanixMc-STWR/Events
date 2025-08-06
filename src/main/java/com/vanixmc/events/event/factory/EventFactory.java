@@ -1,4 +1,4 @@
-package com.vanixmc.events.event.registry;
+package com.vanixmc.events.event.factory;
 
 import com.vanixmc.events.event.domain.AbstractEvent;
 import com.vanixmc.events.event.domain.Event;
@@ -7,6 +7,7 @@ import com.vanixmc.events.event.zone_event.ZoneEvent;
 import com.vanixmc.events.files.FileManager;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.util.Chat;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -14,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public class EventRegistry {
+public class EventFactory {
     private final Map<EventType, ConfigBuilder<Event>> builders;
     private final Map<String, Event> eventMap;
     private final FileManager fileManager;
 
-    public EventRegistry() {
+    public EventFactory() {
         this.builders = new HashMap<>();
         this.eventMap = new HashMap<>();
         this.fileManager = new FileManager("events");
@@ -49,8 +50,7 @@ public class EventRegistry {
             }
             Event event = builder.build(config);
             eventMap.put(fileName, event);
-            System.out.println("Loaded event " + fileName);
-            System.out.println(event.toString());
+            Chat.log("Loaded event: " + fileName);
         }
     }
 

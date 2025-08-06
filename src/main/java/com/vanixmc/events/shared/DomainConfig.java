@@ -55,6 +55,14 @@ public class DomainConfig {
         return value instanceof Boolean ? (Boolean) value : null;
     }
 
+    public Object getObject(String key) {
+        return config.get(key);
+    }
+
+    public String getId() {
+        return (String) config.get("id");
+    }
+
     public List<Object> getObjectList(String key) {
         Object value = config.get(key);
         if (value instanceof List) {
