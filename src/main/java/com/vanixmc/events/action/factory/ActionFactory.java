@@ -20,6 +20,7 @@ public class ActionFactory {
     public ActionFactory() {
         this.builders = new HashMap<>();
         this.registry = new HashMap<>();
+        registerAllActionTypes();
     }
 
     public void registerBuilder(ActionType type, ConfigBuilder<Action> builder) {
@@ -51,7 +52,7 @@ public class ActionFactory {
     }
 
     public ActionHolder createActionHolder(List<Object> actions) {
-        List<Object> resolvedActions = new ArrayList<>();
+        List<Action> resolvedActions = new ArrayList<>();
 
         for (Object item : actions) {
             if (item instanceof Map<?, ?> map) {
