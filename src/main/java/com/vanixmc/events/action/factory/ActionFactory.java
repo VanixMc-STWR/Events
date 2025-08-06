@@ -48,6 +48,7 @@ public class ActionFactory {
         // Register action builders for all action types
         registerBuilder(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
         registerBuilder(ActionType.COMMAND, CommandAction.builder());
+
     }
 
     public ActionHolder createActionHolder(List<Object> actions) {

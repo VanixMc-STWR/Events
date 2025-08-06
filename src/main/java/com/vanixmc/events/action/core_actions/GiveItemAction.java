@@ -40,17 +40,17 @@ public class GiveItemAction implements Action {
 
     public static ConfigBuilder<Action> builder() {
         return config -> {
-            String MATERIALNAME = config.getUppercaseString("material");
-            Integer AMOUNTVALUE = config.getInt("amount");
-            int AMOUNT = AMOUNTVALUE != null ? AMOUNTVALUE : 1;
-            String NAME = config.getString("item-name");
-            List<String> LORE = config.getStringList("lore");
+            String materialName = config.getUppercaseString("material");
+            Integer amountValue = config.getInt("amount");
+            int Amount = amountValue != null ? amountValue : 1;
+            String Name = config.getString("name");
+            List<String> Lore = config.getStringList("lore");
 
-            Material material = Material.getMaterial(MATERIALNAME);
+            Material material = Material.getMaterial(materialName);
             if (material == null) {
-                throw new IllegalArgumentException("Invalid Material" + MATERIALNAME);
+                throw new IllegalArgumentException("Invalid Material" + materialName);
             }
-            return new GiveItemAction(material, AMOUNT, NAME, LORE);
+            return new GiveItemAction(material, Amount, Name, Lore);
         };
     }
 }

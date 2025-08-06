@@ -35,41 +35,41 @@ public class PlaySoundAction implements Action {
 
     public static ConfigBuilder<Action> builder() {
         return config -> {
-            String SOUNDNAME = config.getUppercaseString("sound");
-            if (SOUNDNAME == null) throw new IllegalArgumentException("Sound cannot be null");
+            String soundName = config.getUppercaseString("sound");
+            if (soundName == null) throw new IllegalArgumentException("Sound cannot be null");
 
-            boolean GLOBAL = false;
+            boolean Global = false;
             try {
-                GLOBAL = config.getBoolean("global");
+                Global = config.getBoolean("global");
             } catch (Exception ignored) {
             }
 
-            float VOLUME = 1.0f;
+            float Volume = 1.0f;
             String volumeString = config.getString("volume");
             if (volumeString != null) {
                 try {
-                    VOLUME = Float.parseFloat(volumeString);
+                    Volume = Float.parseFloat(volumeString);
                 } catch (NumberFormatException ignored) {
                 }
             }
 
-            float PITCH = 1.0f;
+            float Pitch = 1.0f;
             String pitchString = config.getString("pitch");
             if (pitchString != null) {
                 try {
-                    PITCH = Float.parseFloat(pitchString);
+                    Pitch = Float.parseFloat(pitchString);
                 } catch (NumberFormatException ignored) {
                 }
             }
 
             Sound sound;
             try {
-                sound = Sound.valueOf(SOUNDNAME);
+                sound = Sound.valueOf(soundName);
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid sound: " + SOUNDNAME);
+                throw new IllegalArgumentException("Invalid sound: " + soundName);
             }
 
-            return new PlaySoundAction(sound, GLOBAL, VOLUME, PITCH);
+            return new PlaySoundAction(sound, Global, Volume, Pitch);
         };
     }
 }
