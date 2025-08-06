@@ -19,6 +19,7 @@ public class ConditionFactory {
     public ConditionFactory() {
         this.builders = new HashMap<>();
         this.registry = new HashMap<>();
+        registerAllConditionTypes();
     }
 
     public void registerBuilder(ConditionType type, ConfigBuilder<Condition> builder) {

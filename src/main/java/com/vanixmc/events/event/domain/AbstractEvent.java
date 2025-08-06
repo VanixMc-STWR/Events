@@ -33,6 +33,13 @@ public abstract class AbstractEvent implements Event {
     }
 
     @Override
+    public void execute(EventContext eventContext) {
+        if (!running) return;
+        if (!conditionHolder.checkAll(eventContext)) return;
+        actionHolder.executeAll(eventContext);
+    }
+
+    @Override
     public boolean isRunning() {
         return running;
     }

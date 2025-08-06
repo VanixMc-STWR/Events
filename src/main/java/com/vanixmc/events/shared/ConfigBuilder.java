@@ -13,15 +13,15 @@ public interface ConfigBuilder<T> {
      * Child properties override parent properties.
      *
      * @param key The key to resolve
-     * @param conditions The map of all objects from file
+     * @param map The map of all objects from file
      * @return The merged DomainConfig
      */
-    static DomainConfig resolveConfig(String key, Map<String, Map<String, Object>> conditions) {
-        Map<String, Object> raw = new HashMap<>(conditions.get(key));
+    static DomainConfig resolveConfig(String key, Map<String, Map<String, Object>> map) {
+        Map<String, Object> raw = new HashMap<>(map.get(key));
         if (raw.containsKey("id")) {
             // Inherit from parent condition
             String parentId = (String) raw.get("id");
-            DomainConfig parent = resolveConfig(parentId, conditions);
+            DomainConfig parent = resolveConfig(parentId, map);
             Map<String, Object> parentMap = new HashMap<>(parent.getConfig());
             parentMap.putAll(raw); // Child overrides parent
             DomainConfig merged = new DomainConfig();

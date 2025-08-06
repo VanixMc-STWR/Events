@@ -17,6 +17,10 @@ public class DomainConfig {
         config = new HashMap<>();
     }
 
+    public DomainConfig(Map<String, Object> data) {
+        config = new HashMap<>(data);
+    }
+
     /**
      * Retrieves the value associated with the given key as a String.
      * Returns an empty string if the value is not a String or is absent.

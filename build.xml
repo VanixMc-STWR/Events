@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<!DOCTYPE xml>
+<project name="StarEvents" default="Build">
+
+    <!-- Load Maven properties -->
+    <property file="target/maven-archiver/pom.properties"/>
+
+    <target name="Build">
+        <jar jarfile="C:/Users/altur/Documents/Plugin Development/Dev Servers/paper-1.21.7/plugins/StarEvents-${version}.jar"
+             basedir="./target/classes/" includes="**/*">
+            <zipfileset
+                    src="C:/Users/altur/.m2/repository/co/aikar/acf-bukkit/0.5.1-SNAPSHOT/acf-bukkit-0.5.1-20220801.070114-17.jar"/>
+        </jar>
+    </target>
+
+</project>
