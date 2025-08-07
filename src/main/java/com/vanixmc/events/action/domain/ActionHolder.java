@@ -20,6 +20,10 @@ public class ActionHolder {
         this.actions = new ArrayList<>(actions);
     }
 
+    public void populate(ActionHolder actionHolder) {
+        this.actions.addAll(actionHolder.getActions());
+    }
+
     public void executeAll(EventContext eventContext) {
         actions.forEach(action -> action.execute(eventContext));
     }

@@ -27,9 +27,7 @@ public class FileManager {
         File file = new File(directory, name + ".yml");
         try (InputStream inputStream = new FileInputStream(file)) {
             Yaml yml = new Yaml();
-            Map<String, Object> data = yml.load(inputStream);
-            System.out.println("Loaded " + data);
-            return data;
+            return yml.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

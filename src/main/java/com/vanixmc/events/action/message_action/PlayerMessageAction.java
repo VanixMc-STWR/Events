@@ -1,5 +1,6 @@
 package com.vanixmc.events.action.message_action;
 
+import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.event.domain.EventContext;
 import com.vanixmc.events.shared.ConfigBuilder;
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player;
 
 @Getter
 @ToString
-public class PlayerMessageAction implements Action {
+public class PlayerMessageAction extends AbstractAction {
     private final MessageFormat format;
     private final String message;
     private String subtitle = "";
@@ -39,15 +40,16 @@ public class PlayerMessageAction implements Action {
     }
 
     @Override
-    public void execute(EventContext context) {
+    public boolean execute(EventContext context) {
         Player player = context.player();
         if (player == null) throw new RuntimeException("Player null in event context.");
 
         if (format == MessageFormat.TITLE) {
-            player.sendTitle(message, subtitle, fadeInTicks, stayTicks, fadeOutTicks);
-            return;
+            player.sendTitle(Chat.colorize(message), Chat.colorize(subtitle), fadeInTicks, stayTicks, fadeOutTicks);
+            return true;
         }
         Chat.tell(player, format, message);
+        return true;
     }
 
     public static ConfigBuilder<Action> builder() {

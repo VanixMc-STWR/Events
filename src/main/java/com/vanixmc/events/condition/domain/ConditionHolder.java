@@ -20,6 +20,10 @@ public class ConditionHolder {
         this.conditions = new ArrayList<>(conditions);
     }
 
+    public void populate(ConditionHolder conditionHolder) {
+        this.conditions.addAll(conditionHolder.getConditions());
+    }
+
     public boolean checkAll(EventContext eventContext) {
         return conditions.stream().allMatch(condition -> condition.test(eventContext));
     }

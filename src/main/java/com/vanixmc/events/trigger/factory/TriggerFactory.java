@@ -3,13 +3,15 @@ package com.vanixmc.events.trigger.factory;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
 import com.vanixmc.events.trigger.domain.Trigger;
-import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.TriggerType;
 import com.vanixmc.events.trigger.domain.Triggerable;
 import com.vanixmc.events.trigger.listener_triggers.RegionEnterTrigger;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class TriggerFactory {
     private final Map<TriggerType, ConfigBuilder<Trigger>> builders;
@@ -49,9 +51,8 @@ public class TriggerFactory {
         builders.put(TriggerType.REGION_ENTER, RegionEnterTrigger.builder());
     }
 
-    public TriggerHolder createTriggerHolder(List<Object> triggers, Triggerable triggerable) {
-        List<Trigger> resolvedTriggers = new ArrayList<>();
-
+    public void subscribeTriggers(List<Object> triggers, Triggerable triggerable) {
+        if (triggers == null) return;
         for (Object item : triggers) {
             if (item instanceof Map<?, ?> map) {
                 @SuppressWarnings("unchecked")
@@ -65,19 +66,26 @@ public class TriggerFactory {
                         throw new IllegalArgumentException("Unknown reusable trigger: " + id);
                     }
                     reusable.subscribe(triggerable);
-                    resolvedTriggers.add(reusable);
                 } else {
                     // Inline action
                     String tempKey = UUID.randomUUID().toString(); // Temp key for resolving
                     Map<String, Map<String, Object>> wrapper = Map.of(tempKey, triggerData);
                     Trigger inlineTrigger = create(tempKey, wrapper);
                     inlineTrigger.subscribe(triggerable);
-                    resolvedTriggers.add(inlineTrigger);
                 }
             } else {
                 throw new IllegalArgumentException("Trigger entry must be a map: " + item);
             }
         }
-        return new TriggerHolder(resolvedTriggers);
     }
+
+    //#region Lazy Initialization
+    public static TriggerFactory getInstance() {
+        return InstanceHolder.instance;
+    }
+
+    private static final class InstanceHolder {
+        private static final TriggerFactory instance = new TriggerFactory();
+    }
+    //#endregion
 }

@@ -1,5 +1,6 @@
 package com.vanixmc.events.action.command_action;
 
+import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.event.domain.EventContext;
 import com.vanixmc.events.shared.ConfigBuilder;
@@ -12,22 +13,26 @@ import org.bukkit.entity.Player;
 @AllArgsConstructor
 @Getter
 @ToString
-public class CommandAction implements Action {
+public class CommandAction extends AbstractAction {
     private final CommandSender commandSender;
     private final String command;
 
     @Override
-    public void execute(EventContext context) {
-        switch (commandSender) {
+    public boolean execute(EventContext context) {
+        return switch (commandSender) {
             case PLAYER -> {
                 Player player = context.player();
                 if (player == null)
                     throw new RuntimeException("Player is null in context. (ActionCommand with " + commandSender + " command sender)");
 
                 Bukkit.getServer().dispatchCommand(player, command);
+                yield true;
             }
-            case CONSOLE -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-        }
+            case CONSOLE -> {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                yield true;
+            }
+        };
     }
 
     public static ConfigBuilder<Action> builder() {

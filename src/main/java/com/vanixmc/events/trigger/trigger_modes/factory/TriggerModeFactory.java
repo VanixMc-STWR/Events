@@ -72,4 +72,14 @@ public class TriggerModeFactory {
             throw new IllegalArgumentException("TriggerMode entry must be a map: " + triggerMode);
         }
     }
+
+    //#region Lazy Initialization
+    public static TriggerModeFactory getInstance() {
+        return TriggerModeFactory.InstanceHolder.instance;
+    }
+
+    private static final class InstanceHolder {
+        private static final TriggerModeFactory instance = new TriggerModeFactory();
+    }
+    //#endregion
 }

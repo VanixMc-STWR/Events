@@ -7,6 +7,7 @@ import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.trigger.factory.TriggerFactory;
 import lombok.Getter;
 
 import java.util.*;
@@ -42,7 +43,11 @@ public class ActionFactory {
         if (builder == null) {
             throw new IllegalArgumentException("Unknown action type: " + type);
         }
-        return builder.build(config);
+        Action action = builder.build(config);
+        List<Object> triggers = config.getObjectList("triggers");
+        TriggerFactory.getInstance()
+                .subscribeTriggers(triggers, action);
+        return action;
     }
 
     public void registerAllActionTypes() {

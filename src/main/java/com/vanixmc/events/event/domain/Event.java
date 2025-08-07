@@ -11,11 +11,13 @@ public interface Event extends Triggerable {
 
     ActionHolder getActionHolder();
 
+    ActionHolder getStartActionHolder();
+
     boolean start();
 
     boolean stop();
 
-    void execute(EventContext context);
+    boolean execute(EventContext context);
 
     boolean isRunning();
 }

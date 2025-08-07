@@ -6,42 +6,33 @@ import com.vanixmc.events.trigger.domain.Triggerable;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @Setter
 public class MultiTriggerMode implements TriggerMode {
     private final int maxAmount;
-    private int currentAmount;
+    private int timesTriggered;
 
-    public MultiTriggerMode(int currentAmount, int maxAmount) {
+    public MultiTriggerMode(int maxAmount, int timesTriggered) {
+        this.timesTriggered = timesTriggered;
         this.maxAmount = maxAmount;
-        this.currentAmount = currentAmount;
     }
 
     @Override
-    public void evaluate(Trigger trigger, List<Triggerable> subscribers) {
-        if (currentAmount++ >= maxAmount) {
-            List<Triggerable> subscribersClone = new ArrayList<>(subscribers);
-            subscribersClone.forEach(trigger::unsubscribe);
-        }
+    public void evaluate(Trigger trigger, Triggerable triggerable) {
+        if (!(timesTriggered++ >= maxAmount)) return;
+        trigger.unsubscribe(triggerable);
     }
 
     public static ConfigBuilder<TriggerMode> builder() {
         return config -> {
             Integer maxAmount = config.getInt("max-amount");
-            Integer currentAmount = config.getInt("current-amount");
+            Integer timesTriggered = config.getInt("times-triggered");
 
             if (maxAmount == null) {
-                throw new IllegalArgumentException("MaxAmount cannot be null!");
+                throw new IllegalArgumentException("MaxAmount cannot be null for multi-trigger-mode!");
             }
 
-            if (currentAmount == null) {
-                currentAmount = 0;
-            }
-
-            return new MultiTriggerMode(currentAmount, maxAmount);
+            return new MultiTriggerMode(maxAmount, timesTriggered != null ? timesTriggered : 0);
         };
     }
 }

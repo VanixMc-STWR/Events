@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Make trigger mode not count failed triggerable.trigger
 public abstract class AbstractTrigger implements Trigger {
     private final List<Triggerable> subscribers;
     private final TriggerMode triggerMode;
@@ -38,11 +37,20 @@ public abstract class AbstractTrigger implements Trigger {
 
     @Override
     public void fire(EventContext context) {
-        subscribers.forEach(triggerable -> {
-            EventContext newContext = EventContext.from(context, null, null, triggerable, null);
-            triggerable.trigger(newContext);
+        List<Triggerable> subscribersClone = new ArrayList<>(subscribers);
+        subscribersClone.forEach(triggerable -> {
+            // Only proceed if the triggerable is still in the subscribers list
+            if (subscribers.contains(triggerable)) {
+                EventContext newContext = EventContext.from(context, null, null, triggerable, null);
+                boolean triggered = triggerable.trigger(newContext);
+                if (!triggered) return;
+
+                // Use synchronized block when evaluating to prevent concurrent modification
+                synchronized (subscribers) {
+                    triggerMode.evaluate(this, triggerable);
+                }
+            }
         });
-        triggerMode.evaluate(this, subscribers);
     }
 
     @Override

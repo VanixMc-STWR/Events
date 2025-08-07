@@ -1,6 +1,5 @@
 package com.vanixmc.events.trigger.listener_triggers;
 
-import com.vanixmc.events.EventsPlugin;
 import com.vanixmc.events.event.domain.EventContext;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.trigger.domain.Trigger;
@@ -42,10 +41,12 @@ public class RegionEnterTrigger extends ListenerTrigger {
             String id = config.getId();
             String regionId = config.getString("region-id");
             Object triggerModeObject = config.getObject("mode");
+            
+            TriggerMode triggerMode = TriggerModeFactory.getInstance().getTriggerMode(triggerModeObject);
 
-            TriggerModeFactory triggerModeFactory = EventsPlugin.getInstance()
-                    .getTriggerModeFactory();
-            TriggerMode triggerMode = triggerModeFactory.getTriggerMode(triggerModeObject);
+            if (triggerModeObject == null) {
+                // set it to single trigger mode
+            }
 
             return new RegionEnterTrigger(id, regionId, triggerMode);
         };

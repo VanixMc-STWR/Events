@@ -2,7 +2,6 @@ package com.vanixmc.events.event.domain;
 
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.condition.domain.ConditionHolder;
-import com.vanixmc.events.trigger.domain.TriggerHolder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,18 +10,18 @@ import lombok.ToString;
 @ToString
 public abstract class AbstractEvent implements Event {
     private final String id;
-    private final TriggerHolder triggerHolder;
     private final ConditionHolder conditionHolder;
+    private final ActionHolder startActionHolder;
     private final ActionHolder actionHolder;
 
     @Setter
     private boolean running;
 
-    public AbstractEvent(String id, TriggerHolder triggerHolder, ConditionHolder conditionHolder, ActionHolder actionHolder) {
+    public AbstractEvent(String id) {
         this.id = id;
-        this.triggerHolder = triggerHolder;
-        this.conditionHolder = conditionHolder;
-        this.actionHolder = actionHolder;
+        this.startActionHolder = new ActionHolder();
+        this.conditionHolder = new ConditionHolder();
+        this.actionHolder = new ActionHolder();
     }
 
     @Override
@@ -41,14 +40,20 @@ public abstract class AbstractEvent implements Event {
     }
 
     @Override
-    public void execute(EventContext context) {
-        if (!conditionHolder.checkAll(context)) return;
-        actionHolder.executeAll(context);
+    public ActionHolder getStartActionHolder() {
+        return startActionHolder;
     }
 
     @Override
-    public void trigger(EventContext context) {
-        execute(context);
+    public boolean execute(EventContext context) {
+        if (!conditionHolder.checkAll(context)) return false;
+        actionHolder.executeAll(context);
+        return true;
+    }
+
+    @Override
+    public boolean trigger(EventContext context) {
+        return execute(context);
     }
 
     @Override
