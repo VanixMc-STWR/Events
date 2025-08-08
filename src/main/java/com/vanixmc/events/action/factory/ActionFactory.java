@@ -7,6 +7,7 @@ import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.factory.TriggerFactory;
 import lombok.Getter;
 
@@ -45,8 +46,10 @@ public class ActionFactory {
         }
         Action action = builder.build(config);
         List<Object> triggers = config.getObjectList("triggers");
-        TriggerFactory.getInstance()
-                .subscribeTriggers(triggers, action);
+        TriggerHolder triggerHolder = TriggerFactory.getInstance()
+                .createActionHolder(triggers, action);
+        action.getTriggerHolder().populate(triggerHolder);
+
         return action;
     }
 

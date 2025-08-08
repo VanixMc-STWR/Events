@@ -2,6 +2,7 @@ package com.vanixmc.events.event.domain;
 
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.condition.domain.ConditionHolder;
+import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.Triggerable;
 
 public interface Event extends Triggerable {
@@ -11,7 +12,7 @@ public interface Event extends Triggerable {
 
     ActionHolder getActionHolder();
 
-    ActionHolder getStartActionHolder();
+    TriggerHolder getTriggerHolder();
 
     boolean start();
 

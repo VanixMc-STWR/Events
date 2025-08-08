@@ -1,8 +1,9 @@
-package com.vanixmc.events.trigger.trigger_modes;
+package com.vanixmc.events.trigger.trigger_modes.multi;
 
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.Triggerable;
+import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +26,7 @@ public class MultiTriggerMode implements TriggerMode {
 
     public static ConfigBuilder<TriggerMode> builder() {
         return config -> {
-            Integer maxAmount = config.getInt("max-amount");
+            Integer maxAmount = config.getInt("amount");
             Integer timesTriggered = config.getInt("times-triggered");
 
             if (maxAmount == null) {

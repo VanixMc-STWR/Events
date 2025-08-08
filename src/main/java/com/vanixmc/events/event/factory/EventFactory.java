@@ -10,6 +10,7 @@ import com.vanixmc.events.event.zone_event.ZoneEvent;
 import com.vanixmc.events.files.FileManager;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.factory.TriggerFactory;
 import com.vanixmc.events.util.Chat;
 import lombok.Getter;
@@ -63,18 +64,16 @@ public class EventFactory {
             List<Object> triggers = config.getObjectList("triggers");
             List<Object> conditions = config.getObjectList("conditions");
             List<Object> actions = config.getObjectList("actions");
-            List<Object> startActions = config.getObjectList("start-actions");
 
             ConditionHolder conditionHolder = instance.getConditionFactory().createConditionHolder(conditions);
 
             ActionFactory actionFactory = instance.getActionFactory();
             ActionHolder actionHolder = actionFactory.createActionHolder(actions);
-            ActionHolder startActionHolder = actionFactory.createActionHolder(startActions);
 
-            TriggerFactory.getInstance().subscribeTriggers(triggers, event);
+            TriggerHolder triggerHolder = TriggerFactory.getInstance().createActionHolder(triggers, event);
             event.getConditionHolder().populate(conditionHolder);
             event.getActionHolder().populate(actionHolder);
-            event.getStartActionHolder().populate(startActionHolder);
+            event.getTriggerHolder().populate(triggerHolder);
 
             register(fileName, event);
         }

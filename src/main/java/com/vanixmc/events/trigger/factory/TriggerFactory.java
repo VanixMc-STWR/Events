@@ -3,15 +3,13 @@ package com.vanixmc.events.trigger.factory;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
 import com.vanixmc.events.trigger.domain.Trigger;
+import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.TriggerType;
 import com.vanixmc.events.trigger.domain.Triggerable;
 import com.vanixmc.events.trigger.listener_triggers.RegionEnterTrigger;
 import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TriggerFactory {
     private final Map<TriggerType, ConfigBuilder<Trigger>> builders;
@@ -51,32 +49,36 @@ public class TriggerFactory {
         builders.put(TriggerType.REGION_ENTER, RegionEnterTrigger.builder());
     }
 
-    public void subscribeTriggers(List<Object> triggers, Triggerable triggerable) {
-        if (triggers == null) return;
+    public TriggerHolder createActionHolder(List<Object> triggers, Triggerable triggerable) {
+        List<Trigger> resolvedTriggers = new ArrayList<>();
+
         for (Object item : triggers) {
             if (item instanceof Map<?, ?> map) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> triggerData = (Map<String, Object>) map;
+                Map<String, Object> actionData = (Map<String, Object>) map;
 
                 // Reference by id
-                if (triggerData.containsKey("id") && triggerData.size() == 1) {
-                    String id = (String) triggerData.get("id");
+                if (actionData.containsKey("id") && actionData.size() == 1) {
+                    String id = (String) actionData.get("id");
                     Trigger reusable = registry.get(id);
                     if (reusable == null) {
-                        throw new IllegalArgumentException("Unknown reusable trigger: " + id);
+                        throw new IllegalArgumentException("Unknown reusable action: " + id);
                     }
+                    resolvedTriggers.add(reusable);
                     reusable.subscribe(triggerable);
                 } else {
                     // Inline action
                     String tempKey = UUID.randomUUID().toString(); // Temp key for resolving
-                    Map<String, Map<String, Object>> wrapper = Map.of(tempKey, triggerData);
+                    Map<String, Map<String, Object>> wrapper = Map.of(tempKey, actionData);
                     Trigger inlineTrigger = create(tempKey, wrapper);
+                    resolvedTriggers.add(inlineTrigger);
                     inlineTrigger.subscribe(triggerable);
                 }
             } else {
-                throw new IllegalArgumentException("Trigger entry must be a map: " + item);
+                throw new IllegalArgumentException("Action entry must be a map: " + item);
             }
         }
+        return new TriggerHolder(resolvedTriggers);
     }
 
     //#region Lazy Initialization

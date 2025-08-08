@@ -2,9 +2,9 @@ package com.vanixmc.events.trigger.trigger_modes.factory;
 
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
-import com.vanixmc.events.trigger.trigger_modes.MultiTriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.TriggerModeType;
+import com.vanixmc.events.trigger.trigger_modes.multi.MultiTriggerMode;
 import lombok.Getter;
 
 import java.util.HashMap;
