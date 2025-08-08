@@ -1,10 +1,10 @@
 package com.vanixmc.events.condition.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 
 @FunctionalInterface
 public interface Condition {
-    boolean test(EventContext eventContext);
+    boolean test(Context context);
 
     default Condition and(Condition other) {
         return context -> this.test(context) && other.test(context);

@@ -7,6 +7,9 @@ import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.TriggerType;
 import com.vanixmc.events.trigger.domain.Triggerable;
 import com.vanixmc.events.trigger.listener_triggers.RegionEnterTrigger;
+import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
+import com.vanixmc.events.trigger.trigger_modes.TriggerModeType;
+import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
 import lombok.Getter;
 
 import java.util.*;
@@ -42,6 +45,20 @@ public class TriggerFactory {
         if (builder == null) {
             throw new IllegalArgumentException("Unknown trigger type: " + type);
         }
+
+        Object triggerModeObject = config.getObject("mode");
+        TriggerMode triggerMode = TriggerModeFactory.getInstance()
+                .getTriggerMode(triggerModeObject);
+
+
+        if (triggerModeObject == null) {
+            triggerMode = TriggerModeFactory.getInstance()
+                    .getBuilders()
+                    .get(TriggerModeType.INFINITE)
+                    .build(new DomainConfig());
+        }
+        config.getConfig().put("trigger-mode", triggerMode);
+
         return builder.build(config);
     }
 
@@ -49,7 +66,7 @@ public class TriggerFactory {
         builders.put(TriggerType.REGION_ENTER, RegionEnterTrigger.builder());
     }
 
-    public TriggerHolder createActionHolder(List<Object> triggers, Triggerable triggerable) {
+    public TriggerHolder createTriggerHolder(List<Object> triggers, Triggerable triggerable) {
         List<Trigger> resolvedTriggers = new ArrayList<>();
 
         for (Object item : triggers) {

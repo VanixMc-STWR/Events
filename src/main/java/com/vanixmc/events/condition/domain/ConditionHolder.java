@@ -1,6 +1,6 @@
 package com.vanixmc.events.condition.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -24,8 +24,8 @@ public class ConditionHolder {
         this.conditions.addAll(conditionHolder.getConditions());
     }
 
-    public boolean checkAll(EventContext eventContext) {
-        return conditions.stream().allMatch(condition -> condition.test(eventContext));
+    public boolean checkAll(Context context) {
+        return conditions.stream().allMatch(condition -> condition.test(context));
     }
 }
 

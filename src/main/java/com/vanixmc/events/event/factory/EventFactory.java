@@ -70,7 +70,7 @@ public class EventFactory {
             ActionFactory actionFactory = instance.getActionFactory();
             ActionHolder actionHolder = actionFactory.createActionHolder(actions);
 
-            TriggerHolder triggerHolder = TriggerFactory.getInstance().createActionHolder(triggers, event);
+            TriggerHolder triggerHolder = TriggerFactory.getInstance().createTriggerHolder(triggers, event);
             event.getConditionHolder().populate(conditionHolder);
             event.getActionHolder().populate(actionHolder);
             event.getTriggerHolder().populate(triggerHolder);

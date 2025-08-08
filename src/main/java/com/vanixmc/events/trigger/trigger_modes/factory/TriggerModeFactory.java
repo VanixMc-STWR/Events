@@ -2,19 +2,18 @@ package com.vanixmc.events.trigger.trigger_modes.factory;
 
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.trigger.trigger_modes.AmountTriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.TriggerModeType;
-import com.vanixmc.events.trigger.trigger_modes.multi.MultiTriggerMode;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Getter
 public class TriggerModeFactory {
     private final Map<TriggerModeType, ConfigBuilder<TriggerMode>> builders;
-
-    @Getter
     private final HashMap<String, TriggerMode> registry;
 
     public TriggerModeFactory() {
@@ -46,7 +45,9 @@ public class TriggerModeFactory {
     }
 
     public void registerAllTriggerTypes() {
-        builders.put(TriggerModeType.MULTI, MultiTriggerMode.builder());
+        builders.put(TriggerModeType.INFINITE, config -> new AmountTriggerMode(-1, 0));
+        builders.put(TriggerModeType.ONCE, config -> new AmountTriggerMode(1, 0));
+        builders.put(TriggerModeType.MULTI, AmountTriggerMode.builder());
     }
 
     public TriggerMode getTriggerMode(Object triggerMode) {

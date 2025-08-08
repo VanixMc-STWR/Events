@@ -2,6 +2,7 @@ package com.vanixmc.events.event.domain;
 
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.condition.domain.ConditionHolder;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,14 +59,15 @@ public abstract class AbstractEvent implements Event {
     }
 
     @Override
-    public boolean execute(EventContext context) {
+    public boolean execute(Context context) {
         if (!conditionHolder.checkAll(context)) return false;
+        context.setEvent(this);
         actionHolder.executeAll(context);
         return true;
     }
 
     @Override
-    public boolean trigger(EventContext context) {
+    public boolean trigger(Context context) {
         return execute(context);
     }
 

@@ -1,6 +1,6 @@
 package com.vanixmc.events.trigger.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 
 import javax.annotation.Nullable;
@@ -36,13 +36,13 @@ public abstract class AbstractTrigger implements Trigger {
     }
 
     @Override
-    public void fire(EventContext context) {
+    public void fire(Context context) {
         List<Triggerable> subscribersClone = new ArrayList<>(subscribers);
         subscribersClone.forEach(triggerable -> {
             // Only proceed if the triggerable is still in the subscribers list
             if (subscribers.contains(triggerable)) {
-                EventContext newContext = EventContext.from(context, null, null, triggerable, null);
-                boolean triggered = triggerable.trigger(newContext);
+                context.setTriggerable(triggerable);
+                boolean triggered = triggerable.trigger(context);
                 if (!triggered) return;
 
                 // Use synchronized block when evaluating to prevent concurrent modification

@@ -5,6 +5,7 @@ import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
+import com.vanixmc.events.action.select_random_action.SelectRandomPlayerAction;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
@@ -45,16 +46,21 @@ public class ActionFactory {
             throw new IllegalArgumentException("Unknown action type: " + type);
         }
         Action action = builder.build(config);
+
         List<Object> triggers = config.getObjectList("triggers");
-        TriggerHolder triggerHolder = TriggerFactory.getInstance()
-                .createActionHolder(triggers, action);
-        action.getTriggerHolder().populate(triggerHolder);
+
+        if (triggers != null) {
+            TriggerHolder triggerHolder = TriggerFactory.getInstance()
+                    .createTriggerHolder(triggers, action);
+            action.getTriggerHolder().populate(triggerHolder);
+        }
 
         return action;
     }
 
     public void registerAllActionTypes() {
         // Register action builders for all action types
+        registerBuilder(ActionType.SELECT_RANDOM_PLAYER, SelectRandomPlayerAction.builder());
         registerBuilder(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
         registerBuilder(ActionType.COMMAND, CommandAction.builder());
     }
@@ -64,6 +70,7 @@ public class ActionFactory {
 
         for (Object item : actions) {
             if (item instanceof Map<?, ?> map) {
+                System.out.println(map);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> actionData = (Map<String, Object>) map;
 

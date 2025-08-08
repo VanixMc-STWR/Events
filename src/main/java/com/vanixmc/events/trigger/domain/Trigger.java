@@ -1,6 +1,6 @@
 package com.vanixmc.events.trigger.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -17,7 +17,7 @@ public interface Trigger {
 
     void unsubscribe(Triggerable triggerable);
 
-    void fire(EventContext context);
+    void fire(Context context);
 
     List<Triggerable> getSubscribers();
 }

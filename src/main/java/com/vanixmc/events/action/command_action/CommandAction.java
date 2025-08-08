@@ -2,7 +2,7 @@ package com.vanixmc.events.action.command_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,10 +18,10 @@ public class CommandAction extends AbstractAction {
     private final String command;
 
     @Override
-    public boolean execute(EventContext context) {
+    public boolean execute(Context context) {
         return switch (commandSender) {
             case PLAYER -> {
-                Player player = context.player();
+                Player player = context.getPlayer();
                 if (player == null)
                     throw new RuntimeException("Player is null in context. (ActionCommand with " + commandSender + " command sender)");
 

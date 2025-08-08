@@ -1,25 +1,25 @@
-package com.vanixmc.events.trigger.trigger_modes.multi;
+package com.vanixmc.events.trigger.trigger_modes;
 
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.Triggerable;
-import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class MultiTriggerMode implements TriggerMode {
+public class AmountTriggerMode implements TriggerMode {
     private final int maxAmount;
     private int timesTriggered;
 
-    public MultiTriggerMode(int maxAmount, int timesTriggered) {
+    public AmountTriggerMode(int maxAmount, int timesTriggered) {
         this.timesTriggered = timesTriggered;
         this.maxAmount = maxAmount;
     }
 
     @Override
     public void evaluate(Trigger trigger, Triggerable triggerable) {
+        if (maxAmount == -1) return;
         if (!(timesTriggered++ >= maxAmount)) return;
         trigger.unsubscribe(triggerable);
     }
@@ -33,7 +33,7 @@ public class MultiTriggerMode implements TriggerMode {
                 throw new IllegalArgumentException("MaxAmount cannot be null for multi-trigger-mode!");
             }
 
-            return new MultiTriggerMode(maxAmount, timesTriggered != null ? timesTriggered : 0);
+            return new AmountTriggerMode(maxAmount, timesTriggered != null ? timesTriggered : 0);
         };
     }
 }

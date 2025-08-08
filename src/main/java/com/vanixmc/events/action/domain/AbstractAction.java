@@ -1,6 +1,6 @@
 package com.vanixmc.events.action.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
 
 public abstract class AbstractAction implements Action {
@@ -11,7 +11,7 @@ public abstract class AbstractAction implements Action {
     }
 
     @Override
-    public boolean trigger(EventContext context) {
+    public boolean trigger(Context context) {
         return execute(context);
     }
 

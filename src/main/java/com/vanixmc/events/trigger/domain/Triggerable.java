@@ -1,7 +1,7 @@
 package com.vanixmc.events.trigger.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 
 public interface Triggerable {
-    boolean trigger(EventContext context);
+    boolean trigger(Context context);
 }

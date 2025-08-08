@@ -2,7 +2,7 @@ package com.vanixmc.events.action.message_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.Chat;
 import lombok.Getter;
@@ -40,9 +40,10 @@ public class PlayerMessageAction extends AbstractAction {
     }
 
     @Override
-    public boolean execute(EventContext context) {
-        Player player = context.player();
+    public boolean execute(Context context) {
+        Player player = context.getPlayer();
         if (player == null) throw new RuntimeException("Player null in event context.");
+        String message = context.getPersistentData().replaceVariables(this.message);
 
         if (format == MessageFormat.TITLE) {
             player.sendTitle(Chat.colorize(message), Chat.colorize(subtitle), fadeInTicks, stayTicks, fadeOutTicks);
