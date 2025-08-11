@@ -61,9 +61,15 @@ public class DomainConfig {
 
     public List<String> getStringList(String key) {
         Object value = config.get(key);
-        if (value instanceof List) {
-            return (List<String>) value;
+        if (value instanceof List<?> list) {
+            boolean allStrings = list.stream().allMatch(e -> e instanceof String);
+            if (allStrings) {
+                @SuppressWarnings("unchecked")
+                List<String> strings = (List<String>) list;
+                return strings;
+            }
         }
         return Collections.emptyList();
     }
+
 }

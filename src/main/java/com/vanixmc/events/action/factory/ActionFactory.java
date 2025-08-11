@@ -5,6 +5,8 @@ import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.message_action.PlayerMessageAction;
+import com.vanixmc.events.action.core_actions.PlaySoundAction;
+import com.vanixmc.events.action.core_actions.GiveItemAction;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
 import lombok.Getter;
@@ -48,6 +50,8 @@ public class ActionFactory {
         // Register action builders for all action types
         registerBuilder(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
         registerBuilder(ActionType.COMMAND, CommandAction.builder());
+        registerBuilder(ActionType.GIVE_ITEM, GiveItemAction.builder());
+        registerBuilder(ActionType.PLAY_SOUND, PlaySoundAction.builder());
 
     }
 

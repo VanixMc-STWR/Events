@@ -25,9 +25,9 @@ public class PlaySoundAction implements Action {
         if (player == null) throw new RuntimeException("The player is null in this context.");
 
         if (global) {
-            for (Player online : Bukkit.getOnlinePlayers()) {
-                online.playSound(online.getLocation(), sound, volume, pitch);
-            }
+            Bukkit.getOnlinePlayers().forEach(p ->
+                    p.playSound(p.getLocation(), sound, volume, pitch)
+            );
         } else {
             player.playSound(player.getLocation(), sound, volume, pitch);
         }
@@ -41,25 +41,18 @@ public class PlaySoundAction implements Action {
             boolean Global = false;
             try {
                 Global = config.getBoolean("global");
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
 
             float Volume = 1.0f;
             String volumeString = config.getString("volume");
             if (volumeString != null) {
-                try {
-                    Volume = Float.parseFloat(volumeString);
-                } catch (NumberFormatException ignored) {
-                }
+                try { Volume = Float.parseFloat(volumeString); } catch (NumberFormatException ignored) {}
             }
 
             float Pitch = 1.0f;
             String pitchString = config.getString("pitch");
             if (pitchString != null) {
-                try {
-                    Pitch = Float.parseFloat(pitchString);
-                } catch (NumberFormatException ignored) {
-                }
+                try { Pitch = Float.parseFloat(pitchString); } catch (NumberFormatException ignored) {}
             }
 
             Sound sound;

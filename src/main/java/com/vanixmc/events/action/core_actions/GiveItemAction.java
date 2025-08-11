@@ -7,50 +7,81 @@ import com.vanixmc.events.util.Chat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
 @Getter
 @ToString
 @AllArgsConstructor
 public class GiveItemAction implements Action {
-    private final Material material;
-    private final int amount;
-    private final String name;
-    private final List<String> lore;
+    private final ItemStack item;
 
     @Override
     public void execute(EventContext context) {
         Player player = context.player();
-        if (player == null) throw new RuntimeException("The player is null in this context.");
-
-        ItemStack item = new ItemStack(material, amount);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            if (name != null) meta.setDisplayName(Chat.colorize(name));
-            if (lore != null) meta.setLore(Chat.colorizeList(lore));
-            item.setItemMeta(meta);
+        if (player == null) {
+            throw new IllegalStateException("Player is null in this context");
         }
-        player.getInventory().addItem(item);
 
+        Map<Integer, ItemStack> leftovers =
+                player.getInventory().addItem(item.clone());
+
+        if (!leftovers.isEmpty()) {
+            leftovers.values().forEach(stack ->
+                    player.getWorld().dropItemNaturally(
+                            player.getLocation(),
+                            stack
+                    )
+            );
+        }
     }
 
     public static ConfigBuilder<Action> builder() {
         return config -> {
-            String materialName = config.getUppercaseString("material");
-            Integer amountValue = config.getInt("amount");
-            int Amount = amountValue != null ? amountValue : 1;
-            String Name = config.getString("name");
-            List<String> Lore = config.getStringList("lore");
-
-            Material material = Material.getMaterial(materialName);
-            if (material == null) {
-                throw new IllegalArgumentException("Invalid Material" + materialName);
+            String materialName = config.getString("material");
+            if (materialName == null || materialName.isBlank()) {
+                throw new IllegalArgumentException("Missing or empty 'material' for GiveItemAction");
             }
-            return new GiveItemAction(material, Amount, Name, Lore);
+            Material material = Material.matchMaterial(materialName); // case-insensitive, supports namespaced keys
+            if (material == null) {
+                throw new IllegalArgumentException("Invalid material: " + materialName);
+            }
+
+            Integer amountValue = config.getInt("amount");
+            int amount = (amountValue != null && amountValue > 0) ? amountValue : 1;
+
+            String rawName = config.getString("name");
+            if (rawName == null || rawName.isBlank()) {
+                throw new IllegalArgumentException("Missing or empty 'name' for GiveItemAction");
+            }
+            String coloredName = Chat.colorize(rawName);
+
+            List<String> rawLore = config.getStringList("lore");
+            List<String> coloredLore = (rawLore == null || rawLore.isEmpty())
+                    ? Collections.emptyList()
+                    : Chat.colorizeList(rawLore);
+
+            ItemStack stack = new ItemStack(material, amount);
+            ItemMeta meta = Bukkit.getItemFactory().getItemMeta(material);
+            if (meta == null) {
+                throw new IllegalStateException("Could not get ItemMeta for " + material);
+            }
+
+            meta.setDisplayName(coloredName);
+            if (!coloredLore.isEmpty()) {
+                meta.setLore(coloredLore);
+            }
+
+            stack.setItemMeta(meta);
+
+            return new GiveItemAction(stack);
         };
     }
 }
