@@ -19,7 +19,7 @@ public class TriggerModeFactory {
     public TriggerModeFactory() {
         this.builders = new HashMap<>();
         this.registry = new HashMap<>();
-        registerAllTriggerTypes();
+        registerAllModeTypes();
     }
 
     public void registerBuilder(TriggerModeType type, ConfigBuilder<TriggerMode> builder) {
@@ -44,7 +44,7 @@ public class TriggerModeFactory {
         return builder.build(config);
     }
 
-    public void registerAllTriggerTypes() {
+    public void registerAllModeTypes() {
         builders.put(TriggerModeType.INFINITE, config -> new AmountTriggerMode(-1, 0));
         builders.put(TriggerModeType.ONCE, config -> new AmountTriggerMode(1, 0));
         builders.put(TriggerModeType.MULTI, AmountTriggerMode.builder());

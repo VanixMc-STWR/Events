@@ -5,6 +5,7 @@ import com.vanixmc.events.trigger.domain.Triggerable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -17,18 +18,13 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Context {
     private Player player;
     private Event event;
     private Triggerable triggerable;
     private org.bukkit.event.Event bukkitEvent;
-    private PersistentData persistentData = new PersistentData();
-
-    public Context(Player player, Event event, org.bukkit.event.Event bukkitEvent) {
-        this.player = player;
-        this.event = event;
-        this.bukkitEvent = bukkitEvent;
-    }
+    private final PersistentData persistentData = new PersistentData();
 
     public static class PersistentData {
         private static final Pattern VAR_PATTERN = Pattern.compile("\\$\\{([\\w-]+)}");
@@ -39,7 +35,15 @@ public class Context {
         }
 
         public void addContext(String key, Object value) {
+            if (contextMap.containsKey(key)) {
+                contextMap.replace(key, value);
+                return;
+            }
             contextMap.put(key, value);
+        }
+
+        public Object removeContext(String key) {
+            return contextMap.remove(key);
         }
 
         public Optional<Object> getContext(String key) {

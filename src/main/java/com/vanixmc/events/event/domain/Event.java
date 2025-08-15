@@ -15,6 +15,8 @@ public interface Event extends Triggerable {
 
     TriggerHolder getTriggerHolder();
 
+    Context.PersistentData getPersistentData();
+
     boolean start();
 
     boolean stop();

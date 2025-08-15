@@ -1,7 +1,6 @@
 package com.vanixmc.events.action.command_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
-import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.AllArgsConstructor;
@@ -35,7 +34,7 @@ public class CommandAction extends AbstractAction {
         };
     }
 
-    public static ConfigBuilder<Action> builder() {
+    public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
             CommandSender sender = CommandSender.valueOf(config.getUppercaseString("sender"));
             String command = config.getString("command");

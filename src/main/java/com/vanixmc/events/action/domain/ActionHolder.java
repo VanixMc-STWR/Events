@@ -27,4 +27,9 @@ public class ActionHolder {
     public void executeAll(Context context) {
         actions.forEach(action -> action.execute(context));
     }
+
+    public void executeAllWithoutTriggers(Context context) {
+        actions.stream().filter(action -> action.getTriggerHolder().isEmpty())
+                .forEach(action -> action.execute(context));
+    }
 }

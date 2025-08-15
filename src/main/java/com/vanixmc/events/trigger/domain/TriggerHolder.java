@@ -25,4 +25,8 @@ public class TriggerHolder {
     public void populate(TriggerHolder triggerHolder) {
         this.triggerList.addAll(triggerHolder.triggerList);
     }
+
+    public boolean isEmpty() {
+        return triggerList.isEmpty();
+    }
 }

@@ -5,9 +5,11 @@ import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.Triggerable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class AmountTriggerMode implements TriggerMode {
     private final int maxAmount;
     private int timesTriggered;

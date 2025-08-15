@@ -1,7 +1,6 @@
 package com.vanixmc.events.action.select_random_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
-import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import org.bukkit.Bukkit;
@@ -23,11 +22,11 @@ public class SelectRandomPlayerAction extends AbstractAction {
         List<Player> online = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (online.isEmpty()) return false;
         Player choice = online.get(ThreadLocalRandom.current().nextInt(online.size()));
-        context.getPersistentData().addContext(variableKey, choice.getName());
+        context.getEvent().getPersistentData().addContext(variableKey, choice.getName());
         return true;
     }
 
-    public static ConfigBuilder<Action> builder() {
+    public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
             String variableKey = config.getString("stored-as");
 

@@ -15,6 +15,7 @@ public abstract class AbstractEvent implements Event {
     private final ConditionHolder conditionHolder;
     private final ActionHolder actionHolder;
     private final TriggerHolder triggerHolder;
+    private final Context.PersistentData persistentData;
 
     @Setter
     private boolean running;
@@ -24,6 +25,7 @@ public abstract class AbstractEvent implements Event {
         this.conditionHolder = new ConditionHolder();
         this.actionHolder = new ActionHolder();
         this.triggerHolder = new TriggerHolder();
+        this.persistentData = new Context.PersistentData();
     }
 
     @Override
@@ -62,8 +64,13 @@ public abstract class AbstractEvent implements Event {
     public boolean execute(Context context) {
         if (!conditionHolder.checkAll(context)) return false;
         context.setEvent(this);
-        actionHolder.executeAll(context);
+        actionHolder.executeAllWithoutTriggers(context);
         return true;
+    }
+
+    @Override
+    public Context.PersistentData getPersistentData() {
+        return persistentData;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.vanixmc.events.action.message_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
-import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.context.Context;
+import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.Chat;
 import lombok.Getter;
@@ -43,8 +43,12 @@ public class PlayerMessageAction extends AbstractAction {
     public boolean execute(Context context) {
         Player player = context.getPlayer();
         if (player == null) throw new RuntimeException("Player null in event context.");
-        String message = context.getPersistentData().replaceVariables(this.message);
 
+        Event event = context.getEvent() != null ? context.getEvent() : getEvent();
+
+        if (getEvent() == null) throw new IllegalStateException("You must define action inline to use persistent data");
+
+        String message = event.getPersistentData().replaceVariables(this.message);
         if (format == MessageFormat.TITLE) {
             player.sendTitle(Chat.colorize(message), Chat.colorize(subtitle), fadeInTicks, stayTicks, fadeOutTicks);
             return true;
@@ -53,7 +57,7 @@ public class PlayerMessageAction extends AbstractAction {
         return true;
     }
 
-    public static ConfigBuilder<Action> builder() {
+    public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
             MessageFormat format = MessageFormat.valueOf(config.getUppercaseString("format"));
             String message = config.getString("message");

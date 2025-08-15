@@ -6,10 +6,7 @@ import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.TriggerType;
 import com.vanixmc.events.trigger.domain.Triggerable;
-import com.vanixmc.events.trigger.listener_triggers.RegionEnterTrigger;
-import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
-import com.vanixmc.events.trigger.trigger_modes.TriggerModeType;
-import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
+import com.vanixmc.events.trigger.listener_triggers.region_trigger.RegionInteractTrigger;
 import lombok.Getter;
 
 import java.util.*;
@@ -45,25 +42,11 @@ public class TriggerFactory {
         if (builder == null) {
             throw new IllegalArgumentException("Unknown trigger type: " + type);
         }
-
-        Object triggerModeObject = config.getObject("mode");
-        TriggerMode triggerMode = TriggerModeFactory.getInstance()
-                .getTriggerMode(triggerModeObject);
-
-
-        if (triggerModeObject == null) {
-            triggerMode = TriggerModeFactory.getInstance()
-                    .getBuilders()
-                    .get(TriggerModeType.INFINITE)
-                    .build(new DomainConfig());
-        }
-        config.getConfig().put("trigger-mode", triggerMode);
-
         return builder.build(config);
     }
 
     public void registerAllTriggerTypes() {
-        builders.put(TriggerType.REGION_ENTER, RegionEnterTrigger.builder());
+        builders.put(TriggerType.REGION_INTERACT, RegionInteractTrigger.builder());
     }
 
     public TriggerHolder createTriggerHolder(List<Object> triggers, Triggerable triggerable) {
@@ -72,27 +55,27 @@ public class TriggerFactory {
         for (Object item : triggers) {
             if (item instanceof Map<?, ?> map) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> actionData = (Map<String, Object>) map;
+                Map<String, Object> triggerData = (Map<String, Object>) map;
 
                 // Reference by id
-                if (actionData.containsKey("id") && actionData.size() == 1) {
-                    String id = (String) actionData.get("id");
+                if (triggerData.containsKey("id") && triggerData.size() == 1) {
+                    String id = (String) triggerData.get("id");
                     Trigger reusable = registry.get(id);
                     if (reusable == null) {
-                        throw new IllegalArgumentException("Unknown reusable action: " + id);
+                        throw new IllegalArgumentException("Unknown reusable trigger: " + id);
                     }
-                    resolvedTriggers.add(reusable);
                     reusable.subscribe(triggerable);
+                    resolvedTriggers.add(reusable);
                 } else {
                     // Inline action
                     String tempKey = UUID.randomUUID().toString(); // Temp key for resolving
-                    Map<String, Map<String, Object>> wrapper = Map.of(tempKey, actionData);
+                    Map<String, Map<String, Object>> wrapper = Map.of(tempKey, triggerData);
                     Trigger inlineTrigger = create(tempKey, wrapper);
-                    resolvedTriggers.add(inlineTrigger);
                     inlineTrigger.subscribe(triggerable);
+                    resolvedTriggers.add(inlineTrigger);
                 }
             } else {
-                throw new IllegalArgumentException("Action entry must be a map: " + item);
+                throw new IllegalArgumentException("Trigger entry must be a map: " + item);
             }
         }
         return new TriggerHolder(resolvedTriggers);
@@ -100,7 +83,7 @@ public class TriggerFactory {
 
     //#region Lazy Initialization
     public static TriggerFactory getInstance() {
-        return InstanceHolder.instance;
+        return TriggerFactory.InstanceHolder.instance;
     }
 
     private static final class InstanceHolder {
