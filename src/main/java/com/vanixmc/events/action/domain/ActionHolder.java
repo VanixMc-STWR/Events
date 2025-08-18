@@ -1,6 +1,6 @@
 package com.vanixmc.events.action.domain;
 
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -20,7 +20,16 @@ public class ActionHolder {
         this.actions = new ArrayList<>(actions);
     }
 
-    public void executeAll(EventContext eventContext) {
-        actions.forEach(action -> action.execute(eventContext));
+    public void populate(ActionHolder actionHolder) {
+        this.actions.addAll(actionHolder.getActions());
+    }
+
+    public void executeAll(Context context) {
+        actions.forEach(action -> action.execute(context));
+    }
+
+    public void executeAllWithoutTriggers(Context context) {
+        actions.stream().filter(action -> action.getTriggerHolder().isEmpty())
+                .forEach(action -> action.execute(context));
     }
 }

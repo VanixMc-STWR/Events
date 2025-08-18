@@ -1,7 +1,8 @@
 package com.vanixmc.events.action.message_action;
 
-import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.action.domain.AbstractAction;
+import com.vanixmc.events.context.Context;
+import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.Chat;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player;
 
 @Getter
 @ToString
-public class PlayerMessageAction implements Action {
+public class PlayerMessageAction extends AbstractAction {
     private final MessageFormat format;
     private final String message;
     private String subtitle = "";
@@ -39,18 +40,24 @@ public class PlayerMessageAction implements Action {
     }
 
     @Override
-    public void execute(EventContext context) {
-        Player player = context.player();
+    public boolean execute(Context context) {
+        Player player = context.getPlayer();
         if (player == null) throw new RuntimeException("Player null in event context.");
 
+        Event event = context.getEvent() != null ? context.getEvent() : getEvent();
+
+        if (getEvent() == null) throw new IllegalStateException("You must define action inline to use persistent data");
+
+        String message = event.getPersistentData().replaceVariables(this.message);
         if (format == MessageFormat.TITLE) {
-            player.sendTitle(message, subtitle, fadeInTicks, stayTicks, fadeOutTicks);
-            return;
+            player.sendTitle(Chat.colorize(message), Chat.colorize(subtitle), fadeInTicks, stayTicks, fadeOutTicks);
+            return true;
         }
         Chat.tell(player, format, message);
+        return true;
     }
 
-    public static ConfigBuilder<Action> builder() {
+    public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
             MessageFormat format = MessageFormat.valueOf(config.getUppercaseString("format"));
             String message = config.getString("message");

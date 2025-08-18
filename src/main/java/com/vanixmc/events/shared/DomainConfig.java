@@ -50,9 +50,21 @@ public class DomainConfig {
         return value instanceof Integer ? (Integer) value : null;
     }
 
+    public Long getLong(String key) {
+        return (Long) config.get(key);
+    }
+
     public Boolean getBoolean(String key) {
         Object value = config.get(key);
         return value instanceof Boolean ? (Boolean) value : null;
+    }
+
+    public Object getObject(String key) {
+        return config.get(key);
+    }
+
+    public String getId() {
+        return (String) config.get("id");
     }
 
     public List<Object> getObjectList(String key) {

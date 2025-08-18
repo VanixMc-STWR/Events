@@ -1,7 +1,7 @@
 package com.vanixmc.events.condition.permission_condition;
 
 import com.vanixmc.events.condition.domain.Condition;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +15,8 @@ public class PermissionCondition implements Condition {
     private final String permission;
 
     @Override
-    public boolean test(EventContext eventContext) {
-        Player player = eventContext.player();
+    public boolean test(Context context) {
+        Player player = context.getPlayer();
         if (player == null) throw new RuntimeException("EventContext player is null!");
 
         return player.hasPermission(permission);

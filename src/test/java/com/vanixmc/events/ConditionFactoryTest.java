@@ -3,7 +3,7 @@ package com.vanixmc.events;
 import com.vanixmc.events.condition.domain.Condition;
 import com.vanixmc.events.condition.domain.ConditionHolder;
 import com.vanixmc.events.condition.factory.ConditionFactory;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,14 +25,14 @@ public class ConditionFactoryTest {
     private Player player;
 
     @Mock
-    private EventContext eventContext;
+    private Context context;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
         // Setup EventContext to return our mocked player
-        when(eventContext.player()).thenReturn(player);
+        when(context.getPlayer()).thenReturn(player);
 
         // Initialize the condition factory
         conditionFactory = new ConditionFactory();
@@ -53,7 +53,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> conditions = holder.getConditions();
         assertEquals(1, conditions.size());
-        assertTrue(conditions.getFirst().test(eventContext));
+        assertTrue(conditions.getFirst().test(context));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> conditions = holder.getConditions();
         assertEquals(1, conditions.size());
-        assertFalse(conditions.getFirst().test(eventContext)); // AND with false should be false
+        assertFalse(conditions.getFirst().test(context)); // AND with false should be false
 
         // Test "true AND true" = true
         conditionFactory.getRegistry().put("another-true", new TestCondition(true));
@@ -79,7 +79,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> trueAndConditions = trueAndHolder.getConditions();
         assertEquals(1, trueAndConditions.size());
-        assertTrue(trueAndConditions.getFirst().test(eventContext)); // AND with true should be true
+        assertTrue(trueAndConditions.getFirst().test(context)); // AND with true should be true
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> conditions = holder.getConditions();
         assertEquals(1, conditions.size());
-        assertTrue(conditions.getFirst().test(eventContext)); // OR with true should be true
+        assertTrue(conditions.getFirst().test(context)); // OR with true should be true
 
         // Test "false OR false" = false
         conditionFactory.getRegistry().put("another-false", new TestCondition(false));
@@ -105,7 +105,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> falseOrConditions = falseOrHolder.getConditions();
         assertEquals(1, falseOrConditions.size());
-        assertFalse(falseOrConditions.getFirst().test(eventContext)); // OR with false should be false
+        assertFalse(falseOrConditions.getFirst().test(context)); // OR with false should be false
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> andConditions = andHolder.getConditions();
         assertEquals(1, andConditions.size());
-        assertFalse(andConditions.getFirst().test(eventContext));
+        assertFalse(andConditions.getFirst().test(context));
 
         // Test "false OR false OR true" = true
         Map<String, Object> multipleOrCondition = Map.of("id", "always-false or always-false or always-true");
@@ -130,7 +130,7 @@ public class ConditionFactoryTest {
         // Verify
         List<Condition> orConditions = orHolder.getConditions();
         assertEquals(1, orConditions.size());
-        assertTrue(orConditions.getFirst().test(eventContext));
+        assertTrue(orConditions.getFirst().test(context));
     }
 
     /**
@@ -139,7 +139,7 @@ public class ConditionFactoryTest {
      */
     private record TestCondition(boolean result) implements Condition {
         @Override
-        public boolean test(EventContext eventContext) {
+        public boolean test(Context context) {
             return result;
         }
 
