@@ -1,4 +1,4 @@
-package com.vanixmc.events.action.select_random_action;
+package com.vanixmc.events.action.impl.select_random_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.context.Context;

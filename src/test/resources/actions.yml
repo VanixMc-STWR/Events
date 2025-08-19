@@ -1,8 +1,9 @@
 # Reusable actions
 actions:
   reward-base:
-    type: player_message
+    type: message
     format: chat
+    audience: global
     message: "Hello World!"
 
   rare-reward:

@@ -1,13 +1,14 @@
 package com.vanixmc.events.action.factory;
 
-import com.vanixmc.events.action.clear_variable_action.ClearVariableAction;
-import com.vanixmc.events.action.command_action.CommandAction;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
 import com.vanixmc.events.action.domain.ActionType;
-import com.vanixmc.events.action.message_action.PlayerMessageAction;
-import com.vanixmc.events.action.select_random_action.SelectRandomPlayerAction;
+import com.vanixmc.events.action.impl.clear_variable_action.ClearVariableAction;
+import com.vanixmc.events.action.impl.command_action.CommandAction;
+import com.vanixmc.events.action.impl.highlight_region_action.RegionHighlightAction;
+import com.vanixmc.events.action.impl.message_action.MessageAction;
+import com.vanixmc.events.action.impl.select_random_action.SelectRandomPlayerAction;
 import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
@@ -63,9 +64,10 @@ public class ActionFactory {
 
     public void registerAllActionTypes() {
         // Register action builders for all action types
-        registerBuilder(ActionType.CLEAR_VARIABLE_ACTION, ClearVariableAction.builder());
+        registerBuilder(ActionType.REGION_HIGHLIGHT, RegionHighlightAction.builder());
+        registerBuilder(ActionType.CLEAR_VARIABLE, ClearVariableAction.builder());
         registerBuilder(ActionType.SELECT_RANDOM_PLAYER, SelectRandomPlayerAction.builder());
-        registerBuilder(ActionType.PLAYER_MESSAGE, PlayerMessageAction.builder());
+        registerBuilder(ActionType.MESSAGE, MessageAction.builder());
         registerBuilder(ActionType.COMMAND, CommandAction.builder());
     }
 
