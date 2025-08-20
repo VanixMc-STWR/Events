@@ -27,20 +27,19 @@ public class GiveItemAction implements Action {
     public void execute(EventContext context) {
         Player player = context.player();
         if (player == null) {
-            throw new IllegalStateException("Player is null in this context");
+            return;
         }
 
-        Map<Integer, ItemStack> leftovers =
-                player.getInventory().addItem(item.clone());
+        Map<Integer, ItemStack> leftovers = player.getInventory().addItem(item.clone());
+        if (leftovers.isEmpty()) return;
 
-        if (!leftovers.isEmpty()) {
-            leftovers.values().forEach(stack ->
-                    player.getWorld().dropItemNaturally(
-                            player.getLocation(),
-                            stack
-                    )
-            );
-        }
+        dropLeftovers(player, leftovers);
+    }
+
+    private void dropLeftovers(Player player, Map<Integer, ItemStack> leftovers) {
+        leftovers.values().forEach(stack ->
+                player.getWorld().dropItemNaturally(player.getLocation(), stack)
+        );
     }
 
     public static ConfigBuilder<Action> builder() {
@@ -68,7 +67,7 @@ public class GiveItemAction implements Action {
             ItemStack stack = new ItemStack(material, amount);
             ItemMeta meta = stack.getItemMeta();
             if (meta == null) {
-                throw new IllegalStateException("Could not get ItemMeta for " + material);
+                throw new IllegalStateException("Could not get ItemMeta for " + stack);
             }
 
             if (coloredName != null) {

@@ -21,16 +21,16 @@ public class PlaySoundAction implements Action {
 
     @Override
     public void execute(EventContext context) {
-        Player player = context.player();
-        if (player == null) throw new RuntimeException("The player is null in this context.");
-
         if (global) {
             Bukkit.getOnlinePlayers().forEach(p ->
                     p.playSound(p.getLocation(), sound, volume, pitch)
             );
-        } else {
-            player.playSound(player.getLocation(), sound, volume, pitch);
+            return;
         }
+        Player player = context.player();
+        if (player == null) return;
+
+        player.playSound(player.getLocation(), sound, volume, pitch);
     }
 
     public static ConfigBuilder<Action> builder() {
