@@ -52,7 +52,6 @@ public class ActionFactory {
         registerBuilder(ActionType.COMMAND, CommandAction.builder());
         registerBuilder(ActionType.GIVE_ITEM, GiveItemAction.builder());
         registerBuilder(ActionType.PLAY_SOUND, PlaySoundAction.builder());
-
     }
 
     public ActionHolder createActionHolder(List<Object> actions) {

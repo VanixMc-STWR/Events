@@ -58,10 +58,7 @@ public class GiveItemAction implements Action {
             int amount = (amountValue != null && amountValue > 0) ? amountValue : 1;
 
             String rawName = config.getString("name");
-            if (rawName == null || rawName.isBlank()) {
-                throw new IllegalArgumentException("Missing or empty 'name' for GiveItemAction");
-            }
-            String coloredName = Chat.colorize(rawName);
+            String coloredName = (rawName == null || rawName.isBlank()) ? null : Chat.colorize(rawName);
 
             List<String> rawLore = config.getStringList("lore");
             List<String> coloredLore = (rawLore == null || rawLore.isEmpty())
@@ -69,12 +66,14 @@ public class GiveItemAction implements Action {
                     : Chat.colorizeList(rawLore);
 
             ItemStack stack = new ItemStack(material, amount);
-            ItemMeta meta = Bukkit.getItemFactory().getItemMeta(material);
+            ItemMeta meta = stack.getItemMeta();
             if (meta == null) {
                 throw new IllegalStateException("Could not get ItemMeta for " + material);
             }
 
-            meta.setDisplayName(coloredName);
+            if (coloredName != null) {
+                meta.setDisplayName(coloredName);
+            }
             if (!coloredLore.isEmpty()) {
                 meta.setLore(coloredLore);
             }

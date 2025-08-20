@@ -38,21 +38,21 @@ public class PlaySoundAction implements Action {
             String soundName = config.getUppercaseString("sound");
             if (soundName == null) throw new IllegalArgumentException("Sound cannot be null");
 
-            boolean Global = false;
+            boolean global = false;
             try {
-                Global = config.getBoolean("global");
+                global = config.getBoolean("global");
             } catch (Exception ignored) {}
 
-            float Volume = 1.0f;
+            float volume = 1.0f;
             String volumeString = config.getString("volume");
             if (volumeString != null) {
-                try { Volume = Float.parseFloat(volumeString); } catch (NumberFormatException ignored) {}
+                try { volume = Float.parseFloat(volumeString); } catch (NumberFormatException ignored) {}
             }
 
-            float Pitch = 1.0f;
+            float pitch = 1.0f;
             String pitchString = config.getString("pitch");
             if (pitchString != null) {
-                try { Pitch = Float.parseFloat(pitchString); } catch (NumberFormatException ignored) {}
+                try { pitch = Float.parseFloat(pitchString); } catch (NumberFormatException ignored) {}
             }
 
             Sound sound;
@@ -62,7 +62,7 @@ public class PlaySoundAction implements Action {
                 throw new IllegalArgumentException("Invalid sound: " + soundName);
             }
 
-            return new PlaySoundAction(sound, Global, Volume, Pitch);
+            return new PlaySoundAction(sound, global, volume, pitch);
         };
     }
 }
