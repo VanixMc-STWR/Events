@@ -36,12 +36,6 @@ public class GiveItemAction implements Action {
         dropLeftovers(player, leftovers);
     }
 
-    private void dropLeftovers(Player player, Map<Integer, ItemStack> leftovers) {
-        leftovers.values().forEach(stack ->
-                player.getWorld().dropItemNaturally(player.getLocation(), stack)
-        );
-    }
-
     public static ConfigBuilder<Action> builder() {
         return config -> {
             String materialName = config.getString("material");
@@ -81,5 +75,10 @@ public class GiveItemAction implements Action {
 
             return new GiveItemAction(stack);
         };
+    }
+    private void dropLeftovers(Player player, Map<Integer, ItemStack> leftovers) {
+        leftovers.values().forEach(stack ->
+                player.getWorld().dropItemNaturally(player.getLocation(), stack)
+        );
     }
 }
