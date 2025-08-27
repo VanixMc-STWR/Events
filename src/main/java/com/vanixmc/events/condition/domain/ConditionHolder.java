@@ -24,8 +24,11 @@ public class ConditionHolder {
         this.conditions.addAll(conditionHolder.getConditions());
     }
 
-    public boolean checkAll(Context context) {
-        return conditions.stream().allMatch(condition -> condition.test(context));
+    public boolean checkAllAndExecuteActions(Context context) {
+        for (Condition condition : conditions) {
+            if (!condition.test(context)) return false;
+        }
+        return true;
     }
 }
 

@@ -2,6 +2,7 @@ package com.vanixmc.events.trigger.domain;
 
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
+import lombok.Setter;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -9,11 +10,12 @@ import java.util.List;
 
 public abstract class AbstractTrigger implements Trigger {
     private final List<Triggerable> subscribers;
-    private final TriggerMode triggerMode;
     private final String id;
 
-    public AbstractTrigger(TriggerMode triggerMode, String id) {
-        this.triggerMode = triggerMode;
+    @Setter
+    private TriggerMode triggerMode;
+
+    public AbstractTrigger(String id) {
         this.id = id;
         this.subscribers = new ArrayList<>();
     }

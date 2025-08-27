@@ -3,72 +3,33 @@ package com.vanixmc.events.action.factory;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
-import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.action.impl.clear_variable_action.ClearVariableAction;
 import com.vanixmc.events.action.impl.command_action.CommandAction;
 import com.vanixmc.events.action.impl.highlight_region_action.RegionHighlightAction;
 import com.vanixmc.events.action.impl.message_action.MessageAction;
 import com.vanixmc.events.action.impl.select_random_action.SelectRandomPlayerAction;
+import com.vanixmc.events.condition.domain.ConditionHolder;
+import com.vanixmc.events.condition.factory.ConditionFactory;
 import com.vanixmc.events.event.domain.Event;
+import com.vanixmc.events.shared.AbstractFactory;
+import com.vanixmc.events.shared.BuilderKey;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.factory.TriggerFactory;
-import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class ActionFactory {
-    private final Map<ActionType, ConfigBuilder<AbstractAction>> builders;
+public class ActionFactory extends AbstractFactory<AbstractAction, Action> {
 
-    @Getter
-    private final HashMap<String, Action> registry;
-
-    public ActionFactory() {
-        this.builders = new HashMap<>();
-        this.registry = new HashMap<>();
-        registerAllActionTypes();
-    }
-
-    public void registerBuilder(ActionType type, ConfigBuilder<AbstractAction> builder) {
-        builders.put(type, builder);
-    }
-
-    public void registerAll(Map<String, Map<String, Object>> actions) {
+    public void registerAll(Map<String, Map<String, Object>> actions, Event event) {
         for (String key : actions.keySet()) {
-            Action action = create(key, actions);
+            Action action = create(key, actions, event);
             registry.put(key, action);
         }
-    }
-
-    public AbstractAction create(String key, Map<String, Map<String, Object>> actions) {
-        DomainConfig config = ConfigBuilder.resolveConfig(key, actions);
-        ActionType type = ActionType.valueOf(config.getUppercaseString("type"));
-        ConfigBuilder<AbstractAction> builder = builders.get(type);
-
-        if (builder == null) {
-            throw new IllegalArgumentException("Unknown action type: " + type);
-        }
-        AbstractAction action = builder.build(config);
-
-        List<Object> triggers = config.getObjectList("triggers");
-
-        if (triggers != null) {
-            TriggerHolder triggerHolder = TriggerFactory.getInstance()
-                    .createTriggerHolder(triggers, action);
-            action.getTriggerHolder().populate(triggerHolder);
-        }
-
-        return action;
-    }
-
-    public void registerAllActionTypes() {
-        // Register action builders for all action types
-        registerBuilder(ActionType.REGION_HIGHLIGHT, RegionHighlightAction.builder());
-        registerBuilder(ActionType.CLEAR_VARIABLE, ClearVariableAction.builder());
-        registerBuilder(ActionType.SELECT_RANDOM_PLAYER, SelectRandomPlayerAction.builder());
-        registerBuilder(ActionType.MESSAGE, MessageAction.builder());
-        registerBuilder(ActionType.COMMAND, CommandAction.builder());
     }
 
     public ActionHolder createActionHolder(List<Object> actions, Event event) {
@@ -92,7 +53,7 @@ public class ActionFactory {
                     // Inline action
                     String tempKey = UUID.randomUUID().toString(); // Temp key for resolving
                     Map<String, Map<String, Object>> wrapper = Map.of(tempKey, actionData);
-                    AbstractAction inlineAction = create(tempKey, wrapper);
+                    AbstractAction inlineAction = create(tempKey, wrapper, event);
                     resolvedActions.add(inlineAction);
                     inlineAction.setEvent(event);
                 }
@@ -102,5 +63,48 @@ public class ActionFactory {
         }
         return new ActionHolder(resolvedActions);
     }
+
+    @Override
+    public void registerAllBuilders() {
+        registerBuilder(BuilderKey.of("region_highlight", "rg_highlight", "rg_border"), RegionHighlightAction.builder());
+        registerBuilder(BuilderKey.of("clear_variable", "clear_v", "cv"), ClearVariableAction.builder());
+        registerBuilder(BuilderKey.of("select_random_player", "sel_rand_pl"), SelectRandomPlayerAction.builder());
+        registerBuilder(BuilderKey.of("message", "msg"), MessageAction.builder());
+        registerBuilder(BuilderKey.of("command", "cmd"), CommandAction.builder());
+    }
+
+    @Override
+    public AbstractAction create(String key, Map<String, Map<String, Object>> actions, Event event) {
+        DomainConfig config = ConfigBuilder.resolveConfig(key, actions);
+        String type = config.getString("type");
+        ConfigBuilder<AbstractAction> builder = this.getBuilder(type);
+
+        AbstractAction action = builder.build(config);
+
+        List<Object> triggers = config.getObjectList("triggers");
+
+        if (triggers != null) {
+            TriggerHolder triggerHolder = TriggerFactory.getInstance()
+                    .createTriggerHolder(triggers, action);
+            action.getTriggerHolder().populate(triggerHolder);
+        }
+
+        List<Object> conditions = config.getObjectList("conditions");
+        ConditionHolder conditionHolder = ConditionFactory.getInstance()
+                .createConditionHolder(conditions, event);
+        action.getConditionHolder().populate(conditionHolder);
+
+        return action;
+    }
+
+    //#region Lazy Initialization
+    public static ActionFactory getInstance() {
+        return ActionFactory.InstanceHolder.instance;
+    }
+
+    private static final class InstanceHolder {
+        private static final ActionFactory instance = new ActionFactory();
+    }
+    //#endregion
 
 }

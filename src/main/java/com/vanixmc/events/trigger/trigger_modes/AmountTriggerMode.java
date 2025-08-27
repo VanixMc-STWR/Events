@@ -22,7 +22,11 @@ public class AmountTriggerMode implements TriggerMode {
     @Override
     public void evaluate(Trigger trigger, Triggerable triggerable) {
         if (maxAmount == -1) return;
-        if (!(timesTriggered++ >= maxAmount)) return;
+
+        // Increment triggered amount
+        timesTriggered++;
+
+        if (!(timesTriggered >= maxAmount)) return;
         trigger.unsubscribe(triggerable);
     }
 
@@ -35,7 +39,7 @@ public class AmountTriggerMode implements TriggerMode {
                 throw new IllegalArgumentException("MaxAmount cannot be null for multi-trigger-mode!");
             }
 
-            return new AmountTriggerMode(maxAmount, timesTriggered != null ? timesTriggered : 0);
+            return new AmountTriggerMode(maxAmount, timesTriggered != null ? timesTriggered : 1);
         };
     }
 }

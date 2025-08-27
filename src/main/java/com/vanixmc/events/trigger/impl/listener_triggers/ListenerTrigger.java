@@ -1,15 +1,14 @@
-package com.vanixmc.events.trigger.listener_triggers;
+package com.vanixmc.events.trigger.impl.listener_triggers;
 
 import com.vanixmc.events.EventsPlugin;
 import com.vanixmc.events.trigger.domain.AbstractTrigger;
-import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 public class ListenerTrigger extends AbstractTrigger implements Listener {
 
-    public ListenerTrigger(String id, TriggerMode triggerMode) {
-        super(triggerMode, id);
+    public ListenerTrigger(String id) {
+        super(id);
     }
 
     @Override
@@ -22,6 +21,7 @@ public class ListenerTrigger extends AbstractTrigger implements Listener {
 
     @Override
     public void unregister() {
+        // Unregisters listener so that it no longer fires
         HandlerList.unregisterAll(this);
     }
 }

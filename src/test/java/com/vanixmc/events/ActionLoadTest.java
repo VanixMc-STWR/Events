@@ -1,11 +1,12 @@
 package com.vanixmc.events;
 
-import com.vanixmc.events.action.impl.command_action.CommandAction;
-import com.vanixmc.events.action.impl.command_action.CommandSender;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.factory.ActionFactory;
-import com.vanixmc.events.action.impl.message_action.MessageFormat;
+import com.vanixmc.events.action.impl.command_action.CommandAction;
+import com.vanixmc.events.action.impl.command_action.CommandSender;
 import com.vanixmc.events.action.impl.message_action.MessageAction;
+import com.vanixmc.events.action.impl.message_action.MessageFormat;
+import com.vanixmc.events.event.zone_event.ZoneEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -34,12 +35,13 @@ public class ActionLoadTest {
         assertNotNull(data);
         assertTrue(data.containsKey("actions"));
         Map<String, Map<String, Object>> actions = (Map<String, Map<String, Object>>) data.get("actions");
+        ZoneEvent event = new ZoneEvent("test", "test");
 
-        actionFactory.registerAll(actions);
+        actionFactory.registerAll(actions, event);
 
         List<Action> actionsList = new ArrayList<>();
         for (String key : actions.keySet()) {
-            Action action = actionFactory.create(key, actions);
+            Action action = actionFactory.create(key, actions, event);
             actionsList.add(action);
             System.out.println(action);
         }

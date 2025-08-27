@@ -1,53 +1,22 @@
 package com.vanixmc.events.trigger.trigger_modes.factory;
 
-import com.vanixmc.events.shared.ConfigBuilder;
-import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.shared.AbstractFactory;
+import com.vanixmc.events.shared.BuilderKey;
 import com.vanixmc.events.trigger.trigger_modes.AmountTriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
-import com.vanixmc.events.trigger.trigger_modes.TriggerModeType;
 import lombok.Getter;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @Getter
-public class TriggerModeFactory {
-    private final Map<TriggerModeType, ConfigBuilder<TriggerMode>> builders;
-    private final HashMap<String, TriggerMode> registry;
+public class TriggerModeFactory extends AbstractFactory<TriggerMode, TriggerMode> {
 
-    public TriggerModeFactory() {
-        this.builders = new HashMap<>();
-        this.registry = new HashMap<>();
-        registerAllModeTypes();
-    }
-
-    public void registerBuilder(TriggerModeType type, ConfigBuilder<TriggerMode> builder) {
-        builders.put(type, builder);
-    }
-
-    public void registerAll(Map<String, Map<String, Object>> triggers) {
-        for (String key : triggers.keySet()) {
-            TriggerMode trigger = create(key, triggers);
-            registry.put(key, trigger);
-        }
-    }
-
-    public TriggerMode create(String key, Map<String, Map<String, Object>> triggers) {
-        DomainConfig config = ConfigBuilder.resolveConfig(key, triggers);
-        TriggerModeType type = TriggerModeType.valueOf(config.getUppercaseString("type"));
-        ConfigBuilder<TriggerMode> builder = builders.get(type);
-
-        if (builder == null) {
-            throw new IllegalArgumentException("Unknown trigger mode type: " + type);
-        }
-        return builder.build(config);
-    }
-
-    public void registerAllModeTypes() {
-        builders.put(TriggerModeType.INFINITE, config -> new AmountTriggerMode(-1, 0));
-        builders.put(TriggerModeType.ONCE, config -> new AmountTriggerMode(1, 0));
-        builders.put(TriggerModeType.MULTI, AmountTriggerMode.builder());
+    @Override
+    public void registerAllBuilders() {
+        registerBuilder(BuilderKey.of("infinite", "inf"), config -> new AmountTriggerMode(-1, 0));
+        registerBuilder(BuilderKey.of("once", "one", "1"), config -> new AmountTriggerMode(1, 0));
+        registerBuilder(BuilderKey.of("multiple", "multi"), AmountTriggerMode.builder());
     }
 
     public TriggerMode getTriggerMode(Object triggerMode) {

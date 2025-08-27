@@ -2,53 +2,23 @@ package com.vanixmc.events.condition.factory;
 
 import com.vanixmc.events.condition.domain.Condition;
 import com.vanixmc.events.condition.domain.ConditionHolder;
-import com.vanixmc.events.condition.domain.ConditionType;
 import com.vanixmc.events.condition.permission_condition.PermissionCondition;
-import com.vanixmc.events.shared.ConfigBuilder;
-import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.event.domain.Event;
+import com.vanixmc.events.shared.AbstractFactory;
+import com.vanixmc.events.shared.BuilderKey;
 import lombok.Getter;
 
 import java.util.*;
 
-public class ConditionFactory {
-    private final Map<ConditionType, ConfigBuilder<Condition>> builders;
+@Getter
+public class ConditionFactory extends AbstractFactory<Condition, Condition> {
 
-    @Getter
-    private final HashMap<String, Condition> registry;
-
-    public ConditionFactory() {
-        this.builders = new HashMap<>();
-        this.registry = new HashMap<>();
-        registerAllConditionTypes();
+    @Override
+    public void registerAllBuilders() {
+        registerBuilder(BuilderKey.of("permission", "perm"), PermissionCondition.builder());
     }
 
-    public void registerBuilder(ConditionType type, ConfigBuilder<Condition> builder) {
-        builders.put(type, builder);
-    }
-
-    public void registerAll(Map<String, Map<String, Object>> conditions) {
-        for (String key : conditions.keySet()) {
-            Condition condition = create(key, conditions);
-            registry.put(key, condition);
-        }
-    }
-
-    public Condition create(String key, Map<String, Map<String, Object>> conditions) {
-        DomainConfig config = ConfigBuilder.resolveConfig(key, conditions);
-        ConditionType type = ConditionType.valueOf(config.getUppercaseString("type"));
-        ConfigBuilder<Condition> builder = builders.get(type);
-
-        if (builder == null) {
-            throw new IllegalArgumentException("Unknown condition type: " + type);
-        }
-        return builder.build(config);
-    }
-
-    public void registerAllConditionTypes() {
-        builders.put(ConditionType.PERMISSION, PermissionCondition.builder());
-    }
-
-    public ConditionHolder createConditionHolder(List<Object> conditions) {
+    public ConditionHolder createConditionHolder(List<Object> conditions, Event event) {
         List<Condition> resolvedConditions = new ArrayList<>();
 
         for (Object item : conditions) {
@@ -66,7 +36,7 @@ public class ConditionFactory {
                     // Inline condition (not by id)
                     String tempKey = UUID.randomUUID().toString();
                     Map<String, Map<String, Object>> wrapper = Map.of(tempKey, conditionData);
-                    Condition inlineCondition = create(tempKey, wrapper);
+                    Condition inlineCondition = create(tempKey, wrapper, event);
                     resolvedConditions.add(inlineCondition);
                 }
             } else {
@@ -105,10 +75,20 @@ public class ConditionFactory {
     }
 
     private Condition resolveSingleId(String id) {
-        Condition reusable = registry.get(id);
+        Condition reusable = super.registry.get(id);
         if (reusable == null) {
             throw new IllegalArgumentException("Unknown reusable condition: " + id);
         }
         return reusable;
     }
+
+    //#region Lazy Initialization
+    public static ConditionFactory getInstance() {
+        return InstanceHolder.instance;
+    }
+
+    private static final class InstanceHolder {
+        private static final ConditionFactory instance = new ConditionFactory();
+    }
+    //#endregion
 }

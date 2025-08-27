@@ -25,6 +25,7 @@ import java.util.Optional;
 public class RegionHighlightAction extends AbstractAction {
     private final String worldName;
     private final String regionName;
+    private final String regionHighlightTitle;
 
     @Override
     public boolean execute(Context context) {
@@ -34,7 +35,7 @@ public class RegionHighlightAction extends AbstractAction {
             BlockVector3 maximumPoint = region.getMaximumPoint();
             Location cornerOne = new Location(Bukkit.getWorld(worldName), minimumPoint.x(), minimumPoint.y(), minimumPoint.z());
             Location cornerTwo = new Location(Bukkit.getWorld(worldName), maximumPoint.x(), maximumPoint.y(), maximumPoint.z());
-            Rendered.getInstance().renderShape(regionName, new CuboidWithTitle(cornerOne, cornerTwo, 0.4f),
+            Rendered.getInstance().renderShape(regionName, new CuboidWithTitle(cornerOne, cornerTwo, 0.4f, regionHighlightTitle),
                     RenderSettings.builder()
                             .lineThickness(0.04f)
                             .lineMaterial(Material.WHITE_CONCRETE)
@@ -57,8 +58,9 @@ public class RegionHighlightAction extends AbstractAction {
                 throw new IllegalArgumentException("region-name cannot be null or empty.");
             }
 
+            String regionHighlightTitle = config.getString("highlight-title");
 
-            return new RegionHighlightAction(worldName, regionName);
+            return new RegionHighlightAction(worldName, regionName, regionHighlightTitle);
         };
     }
 }
