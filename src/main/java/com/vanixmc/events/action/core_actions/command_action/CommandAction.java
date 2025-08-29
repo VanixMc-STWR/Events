@@ -1,4 +1,4 @@
-package com.vanixmc.events.action.impl.command_action;
+package com.vanixmc.events.action.core_actions.command_action;
 
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.context.Context;

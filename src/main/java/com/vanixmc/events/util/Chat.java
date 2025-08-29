@@ -1,6 +1,6 @@
 package com.vanixmc.events.util;
 
-import com.vanixmc.events.action.impl.message_action.MessageFormat;
+import com.vanixmc.events.action.core_actions.message_action.MessageFormat;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;

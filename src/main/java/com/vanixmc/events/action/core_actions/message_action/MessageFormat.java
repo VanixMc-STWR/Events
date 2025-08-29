@@ -1,4 +1,4 @@
-package com.vanixmc.events.action.impl.message_action;
+package com.vanixmc.events.action.core_actions.message_action;
 
 public enum MessageFormat {
     CHAT,
