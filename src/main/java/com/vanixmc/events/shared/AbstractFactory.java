@@ -7,10 +7,9 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public abstract class AbstractFactory<BT, RT> {
     protected final Map<BuilderKey, ConfigBuilder<BT>> builders;
-
-    @Getter
     protected final Map<String, RT> registry;
 
     public AbstractFactory() {
