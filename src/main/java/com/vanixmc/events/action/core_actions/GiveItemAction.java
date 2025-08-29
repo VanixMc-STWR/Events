@@ -1,7 +1,7 @@
 package com.vanixmc.events.action.core_actions;
 
-import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.action.domain.AbstractAction;
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.Chat;
 import lombok.AllArgsConstructor;
@@ -19,23 +19,24 @@ import java.util.Map;
 @Getter
 @ToString
 @AllArgsConstructor
-public class GiveItemAction implements Action {
+public class GiveItemAction extends AbstractAction {
     private final ItemStack item;
 
     @Override
-    public void execute(EventContext context) {
-        Player player = context.player();
+    public boolean execute(Context context) {
+        Player player = context.getPlayer();
         if (player == null) {
-            return;
+            return false;
         }
 
         Map<Integer, ItemStack> leftovers = player.getInventory().addItem(item.clone());
-        if (leftovers.isEmpty()) return;
+        if (leftovers.isEmpty()) return false;
 
         dropLeftovers(player, leftovers);
+        return false;
     }
 
-    public static ConfigBuilder<Action> builder() {
+    public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
             String materialName = config.getString("material");
             if (materialName == null || materialName.isBlank()) {
@@ -75,6 +76,7 @@ public class GiveItemAction implements Action {
             return new GiveItemAction(stack);
         };
     }
+
     private void dropLeftovers(Player player, Map<Integer, ItemStack> leftovers) {
         leftovers.values().forEach(stack ->
                 player.getWorld().dropItemNaturally(player.getLocation(), stack)

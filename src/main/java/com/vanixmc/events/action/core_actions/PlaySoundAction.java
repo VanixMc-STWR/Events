@@ -1,7 +1,8 @@
 package com.vanixmc.events.action.core_actions;
 
-import com.vanixmc.events.action.domain.Action;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.action.domain.AbstractAction;
+import com.vanixmc.events.context.Context;
+import com.vanixmc.events.event.zone_event.ZoneEvent;
 import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,30 +11,45 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 @Getter
 @ToString
 @AllArgsConstructor
-public class PlaySoundAction implements Action {
+public class PlaySoundAction extends AbstractAction {
     private final Sound sound;
     private final boolean global;
     private final float volume;
     private final float pitch;
 
     @Override
-    public void execute(EventContext context) {
+    public boolean execute(Context context) {
         if (global) {
-            Bukkit.getOnlinePlayers().forEach(p ->
-                    p.playSound(p.getLocation(), sound, volume, pitch)
-            );
-            return;
+            if (context.getEvent() != null) {
+                if (context.getEvent() instanceof ZoneEvent zoneEvent) {
+                    zoneEvent.getPlayersInZone()
+                            .stream()
+                            .map(Bukkit::getPlayer)
+                            .filter(Objects::nonNull)
+                            .forEach(p -> p.playSound(p.getLocation(), sound, volume, pitch));
+                    return true;
+                }
+            } else {
+                Bukkit.getOnlinePlayers().forEach(p ->
+                        p.playSound(p.getLocation(), sound, volume, pitch)
+                );
+                return true;
+            }
+            return false;
         }
-        Player player = context.player();
-        if (player == null) return;
+        Player player = context.getPlayer();
+        if (player == null) return false;
 
         player.playSound(player.getLocation(), sound, volume, pitch);
+        return false;
     }
 
-    public static ConfigBuilder<Action> builder() {
+    public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
             String soundName = config.getUppercaseString("sound");
             if (soundName == null) throw new IllegalArgumentException("Sound cannot be null");
@@ -41,18 +57,25 @@ public class PlaySoundAction implements Action {
             boolean global = false;
             try {
                 global = config.getBoolean("global");
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             float volume = 1.0f;
             String volumeString = config.getString("volume");
             if (volumeString != null) {
-                try { volume = Float.parseFloat(volumeString); } catch (NumberFormatException ignored) {}
+                try {
+                    volume = Float.parseFloat(volumeString);
+                } catch (NumberFormatException ignored) {
+                }
             }
 
             float pitch = 1.0f;
             String pitchString = config.getString("pitch");
             if (pitchString != null) {
-                try { pitch = Float.parseFloat(pitchString); } catch (NumberFormatException ignored) {}
+                try {
+                    pitch = Float.parseFloat(pitchString);
+                } catch (NumberFormatException ignored) {
+                }
             }
 
             Sound sound;

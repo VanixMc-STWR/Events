@@ -1,13 +1,11 @@
 package com.vanixmc.events.action.factory;
 
+import com.vanixmc.events.action.core_actions.*;
+import com.vanixmc.events.action.core_actions.command_action.CommandAction;
+import com.vanixmc.events.action.core_actions.message_action.MessageAction;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
-import com.vanixmc.events.action.impl.clear_variable_action.ClearVariableAction;
-import com.vanixmc.events.action.impl.command_action.CommandAction;
-import com.vanixmc.events.action.impl.highlight_region_action.RegionHighlightAction;
-import com.vanixmc.events.action.impl.message_action.MessageAction;
-import com.vanixmc.events.action.impl.select_random_action.SelectRandomPlayerAction;
 import com.vanixmc.events.condition.domain.ConditionHolder;
 import com.vanixmc.events.condition.factory.ConditionFactory;
 import com.vanixmc.events.event.domain.Event;
@@ -71,6 +69,8 @@ public class ActionFactory extends AbstractFactory<AbstractAction, Action> {
         registerBuilder(BuilderKey.of("select_random_player", "sel_rand_pl"), SelectRandomPlayerAction.builder());
         registerBuilder(BuilderKey.of("message", "msg"), MessageAction.builder());
         registerBuilder(BuilderKey.of("command", "cmd"), CommandAction.builder());
+        registerBuilder(BuilderKey.of("give_item", "item_give", "give_i"), GiveItemAction.builder());
+        registerBuilder(BuilderKey.of("play_sound", "play_s", "ps"), PlaySoundAction.builder());
     }
 
     @Override

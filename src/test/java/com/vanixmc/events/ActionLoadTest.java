@@ -1,11 +1,11 @@
 package com.vanixmc.events;
 
+import com.vanixmc.events.action.core_actions.command_action.CommandAction;
+import com.vanixmc.events.action.core_actions.command_action.CommandSender;
+import com.vanixmc.events.action.core_actions.message_action.MessageAction;
+import com.vanixmc.events.action.core_actions.message_action.MessageFormat;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.factory.ActionFactory;
-import com.vanixmc.events.action.impl.command_action.CommandAction;
-import com.vanixmc.events.action.impl.command_action.CommandSender;
-import com.vanixmc.events.action.impl.message_action.MessageAction;
-import com.vanixmc.events.action.impl.message_action.MessageFormat;
 import com.vanixmc.events.event.zone_event.ZoneEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

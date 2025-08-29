@@ -1,4 +1,4 @@
-package com.vanixmc.events.action.impl.highlight_region_action;
+package com.vanixmc.events.action.core_actions;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
