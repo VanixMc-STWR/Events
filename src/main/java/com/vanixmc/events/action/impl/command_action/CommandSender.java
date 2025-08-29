@@ -1,4 +1,4 @@
-package com.vanixmc.events.action.command_action;
+package com.vanixmc.events.action.impl.command_action;
 
 public enum CommandSender {
     PLAYER,

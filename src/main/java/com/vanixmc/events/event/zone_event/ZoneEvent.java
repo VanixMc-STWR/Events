@@ -1,22 +1,25 @@
 package com.vanixmc.events.event.zone_event;
 
-import com.vanixmc.events.action.factory.ActionFactory;
-import com.vanixmc.events.action.domain.ActionHolder;
-import com.vanixmc.events.condition.domain.ConditionHolder;
-import com.vanixmc.events.condition.factory.ConditionFactory;
 import com.vanixmc.events.event.domain.AbstractEvent;
 import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.Getter;
+import lombok.ToString;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
+// TODO: REDO, SPECIFICALLY TO REDUCE GLOBAL SCOPE TO A LIST OF PLAYERS/ENTITIES IN ZONE
 @Getter
+@ToString
 public class ZoneEvent extends AbstractEvent {
+    private final Set<UUID> playersInZone;
     private final String regionId;
 
-    public ZoneEvent(String id, String regionId, ConditionHolder conditionHolder, ActionHolder actionHolder) {
-        super(id, conditionHolder, actionHolder);
+    public ZoneEvent(String id, String regionId) {
+        super(id);
+        this.playersInZone = new HashSet<>();
         this.regionId = regionId;
     }
 
@@ -30,25 +33,19 @@ public class ZoneEvent extends AbstractEvent {
         return false;
     }
 
-    public static ConfigBuilder<Event> build(String id, ActionFactory actionFactory, ConditionFactory conditionFactory) {
-        return config -> {
-            String regionId = config.getString("region-id");
-            List<Object> conditions = config.getObjectList("conditions");
-            List<Object> actions = config.getObjectList("actions");
-
-            return new ZoneEvent(id, regionId, conditionFactory.createConditionHolder(conditions),
-                    actionFactory.createActionHolder(actions));
-        };
+    public void onEnter(UUID playerUUID) {
+        playersInZone.add(playerUUID);
     }
 
-    @Override
-    public String toString() {
-        return "ZoneEvent{" +
-                "id='" + getId() + '\'' +
-                ", regionId='" + regionId + '\'' +
-                ", running=" + isRunning() +
-                ", conditionHolder=" + getConditionHolder() +
-                ", actionHolder=" + getActionHolder() +
-                '}';
+    public void onExit(UUID playerUUID) {
+        playersInZone.remove(playerUUID);
+    }
+
+    public static ConfigBuilder<Event> builder() {
+        return config -> {
+            String id = config.getString("id");
+            String regionId = config.getString("region-id");
+            return new ZoneEvent(id, regionId);
+        };
     }
 }

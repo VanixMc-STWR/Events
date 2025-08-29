@@ -1,7 +1,7 @@
 package com.vanixmc.events;
 
 import com.vanixmc.events.condition.permission_condition.PermissionCondition;
-import com.vanixmc.events.event.domain.EventContext;
+import com.vanixmc.events.context.Context;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ public class PermissionConditionTest {
     private Player player;
 
     @Mock
-    private EventContext eventContext;
+    private Context context;
 
     private final String testPermission = "test.permission";
     private PermissionCondition permissionCondition;
@@ -26,7 +26,7 @@ public class PermissionConditionTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
         // Setup the EventContext to return our mocked player
-        when(eventContext.player()).thenReturn(player);
+        when(context.getPlayer()).thenReturn(player);
         // Create the permission condition with our test permission
         permissionCondition = new PermissionCondition(testPermission);
     }
@@ -37,7 +37,7 @@ public class PermissionConditionTest {
         when(player.hasPermission(testPermission)).thenReturn(true);
 
         // Test the condition
-        boolean result = permissionCondition.test(eventContext);
+        boolean result = permissionCondition.test(context);
 
         // Verify the result is true
         assertTrue(result);
@@ -51,7 +51,7 @@ public class PermissionConditionTest {
         when(player.hasPermission(testPermission)).thenReturn(false);
 
         // Test the condition
-        boolean result = permissionCondition.test(eventContext);
+        boolean result = permissionCondition.test(context);
 
         // Verify the result is false
         assertFalse(result);
@@ -62,10 +62,10 @@ public class PermissionConditionTest {
     @Test
     public void testPermissionCondition_NullPlayer_ThrowsException() {
         // Setup EventContext to return null player
-        when(eventContext.player()).thenReturn(null);
+        when(context.getPlayer()).thenReturn(null);
 
         // Test the condition and expect an exception
-        assertThrows(RuntimeException.class, () -> permissionCondition.test(eventContext));
+        assertFalse(permissionCondition.test(context));
     }
 
     @Test

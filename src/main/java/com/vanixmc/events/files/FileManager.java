@@ -2,10 +2,12 @@ package com.vanixmc.events.files;
 
 import com.vanixmc.events.EventsPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,15 +23,14 @@ public class FileManager {
         }
     }
 
-    public FileConfiguration load(String name) {
-        if (loadedConfigs.containsKey(name)) {
-            return loadedConfigs.get(name);
-        }
-
+    public Map<String, Object> load(String name) {
         File file = new File(directory, name + ".yml");
-        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-        loadedConfigs.put(name, config);
-        return config;
+        try (InputStream inputStream = new FileInputStream(file)) {
+            Yaml yml = new Yaml();
+            return yml.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void save(String name) {
