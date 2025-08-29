@@ -1,52 +1,54 @@
 package com.vanixmc.events.trigger.factory;
 
+import com.vanixmc.events.shared.AbstractFactory;
+import com.vanixmc.events.shared.BuilderKey;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.trigger.domain.AbstractTrigger;
 import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
-import com.vanixmc.events.trigger.domain.TriggerType;
 import com.vanixmc.events.trigger.domain.Triggerable;
-import com.vanixmc.events.trigger.listener_triggers.region_trigger.RegionInteractTrigger;
+import com.vanixmc.events.trigger.impl.listener_triggers.region_trigger.RegionInteractTrigger;
+import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
+import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class TriggerFactory {
-    private final Map<TriggerType, ConfigBuilder<Trigger>> builders;
+@Getter
+public class TriggerFactory extends AbstractFactory<AbstractTrigger, Trigger> {
 
-    @Getter
-    private final HashMap<String, Trigger> registry;
-
-    public TriggerFactory() {
-        this.builders = new HashMap<>();
-        this.registry = new HashMap<>();
-        registerAllTriggerTypes();
+    @Override
+    public void registerAllBuilders() {
+        registerBuilder(BuilderKey.of("region_interact", "region_int", "rg_int"), RegionInteractTrigger.builder());
     }
 
-    public void registerBuilder(TriggerType type, ConfigBuilder<Trigger> builder) {
-        builders.put(type, builder);
-    }
-
-    public void registerAll(Map<String, Map<String, Object>> triggers) {
-        for (String key : triggers.keySet()) {
-            Trigger trigger = create(key, triggers);
-            registry.put(key, trigger);
-        }
-    }
-
-    public Trigger create(String key, Map<String, Map<String, Object>> triggers) {
-        DomainConfig config = ConfigBuilder.resolveConfig(key, triggers);
-        TriggerType type = TriggerType.valueOf(config.getUppercaseString("type"));
-        ConfigBuilder<Trigger> builder = builders.get(type);
+    @Override
+    public AbstractTrigger create(String key, Map<String, Map<String, Object>> fileData) {
+        DomainConfig config = ConfigBuilder.resolveConfig(key, fileData);
+        String type = config.getString("type");
+        ConfigBuilder<AbstractTrigger> builder = this.getBuilder(type);
 
         if (builder == null) {
-            throw new IllegalArgumentException("Unknown trigger type: " + type);
+            throw new IllegalArgumentException("Unknown condition type: " + type);
         }
-        return builder.build(config);
-    }
 
-    public void registerAllTriggerTypes() {
-        builders.put(TriggerType.REGION_INTERACT, RegionInteractTrigger.builder());
+        Object triggerModeFromConfig = config.getObject("mode");
+        TriggerMode triggerMode;
+
+        if (triggerModeFromConfig == null) {
+            ConfigBuilder<TriggerMode> triggerModeBuilder = TriggerModeFactory.getInstance()
+                    .getBuilder("inf");
+            triggerMode = triggerModeBuilder.build(new DomainConfig());
+        } else {
+            triggerMode = TriggerModeFactory.getInstance().getTriggerMode(triggerModeFromConfig);
+        }
+        AbstractTrigger trigger = builder.build(config);
+        trigger.setTriggerMode(triggerMode);
+        return trigger;
     }
 
     public TriggerHolder createTriggerHolder(List<Object> triggers, Triggerable triggerable) {

@@ -25,13 +25,13 @@
                 <version>3.13.0</version>
                 <configuration>
                     <release>${java.version}</release>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>1.18.32</version>
-                            </path>
-                        </annotationProcessorPaths>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -39,15 +39,16 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.3</version>
                 <configuration>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml
+                    </dependencyReducedPomLocation>
                     <relocations>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
                             <shadedPattern>com.vanixmc.events.acf</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>co.aikar.locales</pattern>
-                            <shadedPattern>com.vanixmc.events.locales</shadedPattern>
+                            <pattern>me.ogali.rendered</pattern>
+                            <shadedPattern>com.vanixmc.events.shapes</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -140,6 +141,11 @@
             <artifactId>annotations</artifactId>
             <version>26.0.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.ogali.shapes</groupId>
+            <artifactId>Rendered</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 </project>

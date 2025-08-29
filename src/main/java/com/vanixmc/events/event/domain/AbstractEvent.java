@@ -62,7 +62,7 @@ public abstract class AbstractEvent implements Event {
 
     @Override
     public boolean execute(Context context) {
-        if (!conditionHolder.checkAll(context)) return false;
+        if (!conditionHolder.checkAllAndExecuteActions(context)) return false;
         context.setEvent(this);
         actionHolder.executeAllWithoutTriggers(context);
         return true;

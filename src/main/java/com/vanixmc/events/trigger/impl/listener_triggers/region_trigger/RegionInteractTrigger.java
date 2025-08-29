@@ -1,13 +1,9 @@
-package com.vanixmc.events.trigger.listener_triggers.region_trigger;
+package com.vanixmc.events.trigger.impl.listener_triggers.region_trigger;
 
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
-import com.vanixmc.events.shared.DomainConfig;
-import com.vanixmc.events.trigger.domain.Trigger;
-import com.vanixmc.events.trigger.listener_triggers.ListenerTrigger;
-import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
-import com.vanixmc.events.trigger.trigger_modes.TriggerModeType;
-import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
+import com.vanixmc.events.trigger.domain.AbstractTrigger;
+import com.vanixmc.events.trigger.impl.listener_triggers.ListenerTrigger;
 import com.vanixmc.events.util.Chat;
 import com.vanixmc.events.util.RegionUtils;
 import org.bukkit.Location;
@@ -19,8 +15,8 @@ public class RegionInteractTrigger extends ListenerTrigger {
     private final RegionInteractionType interactionType;
     private final String regionId;
 
-    public RegionInteractTrigger(String id, String regionId, RegionInteractionType interactionType, TriggerMode triggerMode) {
-        super(id, triggerMode);
+    public RegionInteractTrigger(String id, String regionId, RegionInteractionType interactionType) {
+        super(id);
         this.interactionType = interactionType;
         this.regionId = regionId;
     }
@@ -59,22 +55,10 @@ public class RegionInteractTrigger extends ListenerTrigger {
         return RegionUtils.isLocationInRegion(location, regionId);
     }
 
-    public static ConfigBuilder<Trigger> builder() {
+    public static ConfigBuilder<AbstractTrigger> builder() {
         return config -> {
             String id = config.getId();
             String regionId = config.getString("region-id");
-            Object triggerModeFromConfig = config.getObject("mode");
-            TriggerMode triggerMode;
-
-            if (triggerModeFromConfig == null) {
-                triggerMode = TriggerModeFactory.getInstance()
-                        .getBuilders()
-                        .get(TriggerModeType.INFINITE)
-                        .build(new DomainConfig());
-            } else {
-                triggerMode = TriggerModeFactory.getInstance().getTriggerMode(triggerModeFromConfig);
-            }
-
 
             String typeStr = config.getUppercaseString("interaction");
             RegionInteractionType interactionType;
@@ -85,7 +69,7 @@ public class RegionInteractTrigger extends ListenerTrigger {
                 interactionType = RegionInteractionType.ENTER;
             }
 
-            return new RegionInteractTrigger(id, regionId, interactionType, triggerMode);
+            return new RegionInteractTrigger(id, regionId, interactionType);
         };
     }
 }

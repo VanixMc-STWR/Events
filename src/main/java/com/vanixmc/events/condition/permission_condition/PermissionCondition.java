@@ -17,7 +17,7 @@ public class PermissionCondition implements Condition {
     @Override
     public boolean test(Context context) {
         Player player = context.getPlayer();
-        if (player == null) throw new RuntimeException("EventContext player is null!");
+        if (player == null) return false;
 
         return player.hasPermission(permission);
     }

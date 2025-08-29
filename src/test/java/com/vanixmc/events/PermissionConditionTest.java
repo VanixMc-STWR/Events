@@ -65,7 +65,7 @@ public class PermissionConditionTest {
         when(context.getPlayer()).thenReturn(null);
 
         // Test the condition and expect an exception
-        assertThrows(RuntimeException.class, () -> permissionCondition.test(context));
+        assertFalse(permissionCondition.test(context));
     }
 
     @Test
