@@ -1,8 +1,11 @@
 package com.vanixmc.events.trigger.domain;
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 public class TriggerHolder {
     private final List<Trigger> triggerList;
 

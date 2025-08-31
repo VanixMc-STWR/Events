@@ -1,4 +1,4 @@
-package com.vanixmc.events.condition.permission_condition;
+package com.vanixmc.events.condition.conditions;
 
 import com.vanixmc.events.condition.domain.Condition;
 import com.vanixmc.events.context.Context;

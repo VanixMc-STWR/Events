@@ -1,9 +1,9 @@
-package com.vanixmc.events.trigger.impl.listener_triggers.region_trigger;
+package com.vanixmc.events.trigger.triggers.listener_triggers.region_trigger;
 
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.trigger.domain.AbstractTrigger;
-import com.vanixmc.events.trigger.impl.listener_triggers.ListenerTrigger;
+import com.vanixmc.events.trigger.triggers.listener_triggers.ListenerTrigger;
 import com.vanixmc.events.util.Chat;
 import com.vanixmc.events.util.RegionUtils;
 import org.bukkit.Location;

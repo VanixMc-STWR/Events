@@ -76,13 +76,10 @@ public class MessageAction extends AbstractAction {
     private Collection<Player> determineRecipients(Context context) {
         switch (audience) {
             case PLAYER:
-                Player player = context.getPlayer();
-                if (player == null) {
-                    throw new RuntimeException("Player null in event context for PLAYER audience.");
-                }
-                return Collections.singletonList(player);
+                Player audienceEntity = getAudienceEntity(context);
+                return Collections.singletonList(audienceEntity);
             case ALL:
-                return new HashSet<>(Bukkit.getOnlinePlayers());
+                return new HashSet<>(getGlobalScopePlayers());
             case VARIABLE:
                 String playerName = context.getEvent().getPersistentData().replaceVariables(message);
                 Player targetPlayer = Bukkit.getPlayer(playerName);
@@ -124,5 +121,17 @@ public class MessageAction extends AbstractAction {
             }
             return new MessageAction(format, message, audience);
         };
+    }
+
+    private Player getAudienceEntity(Context context) {
+        if (context.getPlayer() != null) {
+            return context.getPlayer();
+        }
+
+        if (context.getEntity() != null && context.getEntity() instanceof Player player) {
+            return player;
+        }
+
+        throw new RuntimeException("Player is null in event context for PLAYER audience. (MessageAction)");
     }
 }

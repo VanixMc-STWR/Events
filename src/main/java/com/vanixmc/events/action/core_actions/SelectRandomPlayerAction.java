@@ -3,10 +3,8 @@ package com.vanixmc.events.action.core_actions;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -19,7 +17,8 @@ public class SelectRandomPlayerAction extends AbstractAction {
 
     @Override
     public boolean execute(Context context) {
-        List<Player> online = new ArrayList<>(Bukkit.getOnlinePlayers());
+        List<Player> online = getGlobalScopePlayers();
+
         if (online.isEmpty()) return false;
         Player choice = online.get(ThreadLocalRandom.current().nextInt(online.size()));
         context.getEvent().getPersistentData().addContext(variableKey, choice.getName());

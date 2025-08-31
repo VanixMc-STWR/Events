@@ -2,6 +2,7 @@ package com.vanixmc.events.shared;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.bukkit.Location;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 @Getter
 @ToString
+@SuppressWarnings("unchecked | unused")
 public class DomainConfig {
     private final Map<String, Object> config;
 
@@ -88,4 +90,10 @@ public class DomainConfig {
         return Collections.emptyList();
     }
 
+    // Bukkit object methods
+
+    public Location getLocation(String key) {
+        Object value = config.get(key);
+        return Location.deserialize((Map<String, Object>) value);
+    }
 }

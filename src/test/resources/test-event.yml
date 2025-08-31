@@ -1,12 +1,19 @@
 type: zone
 region-id: "test"
-trigger: on_enter
+triggers:
+  - type: p_interact
+    action-location:
+      world: "world"
+      x: 0
+      y: 0
+      z: 0
+      pitch: 0
+      yaw: 0
+    action: RIGHT_CLICK_BLOCK
 conditions:
-  - id: player-has-perms and test2
   - type: permission
     permission: "test.perm"
 actions:
-  - id: epic-reward
-  - type: player_message
+  - type: message
     format: title
     message: "You've entered the region!"

@@ -14,7 +14,6 @@ import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.factory.TriggerFactory;
 import com.vanixmc.events.util.Chat;
 import lombok.Getter;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,38 +37,38 @@ public class EventFactory {
 
     public void loadAllEvents() {
         for (String fileName : fileManager.listFileNames()) {
-            Map<String, Object> data = fileManager.load(fileName);
-            DomainConfig config = new DomainConfig(data);
-
-            // Put the id in so it's in the built event
-            config.getConfig().put("id", fileName);
-
-            EventType type = EventType.valueOf(config.getUppercaseString("type"));
-            ConfigBuilder<Event> builder = type.getBuilder();
-
-            if (builder == null) {
-                throw new IllegalArgumentException("Unknown action type: " + type);
-            }
-
-            Event event = builder.build(config);
-            List<Object> triggers = config.getObjectList("triggers");
-            List<Object> conditions = config.getObjectList("conditions");
-            List<Object> actions = config.getObjectList("actions");
-
-            ConditionHolder conditionHolder = ConditionFactory.getInstance().createConditionHolder(conditions, event);
-            ActionHolder actionHolder = ActionFactory.getInstance().createActionHolder(actions, event);
-
-            TriggerHolder triggerHolder = TriggerFactory.getInstance().createTriggerHolder(triggers, event);
-            event.getConditionHolder().populate(conditionHolder);
-            event.getActionHolder().populate(actionHolder);
-            event.getTriggerHolder().populate(triggerHolder);
-
-            register(fileName, event);
+            loadEvent(fileName);
         }
     }
 
-    public FileConfiguration getEventConfig(String eventId) {
-        return fileManager.getConfig(eventId);
+    public void loadEvent(String fileName) {
+        Map<String, Object> data = fileManager.load(fileName);
+        DomainConfig config = new DomainConfig(data);
+
+        // Put the id in so it's in the built event
+        config.getConfig().put("id", fileName);
+
+        EventType type = EventType.valueOf(config.getUppercaseString("type"));
+        ConfigBuilder<Event> builder = type.getBuilder();
+
+        if (builder == null) {
+            throw new IllegalArgumentException("Unknown action type: " + type);
+        }
+
+        Event event = builder.build(config);
+        List<Object> triggers = config.getObjectList("triggers");
+        List<Object> conditions = config.getObjectList("conditions");
+        List<Object> actions = config.getObjectList("actions");
+
+        ConditionHolder conditionHolder = ConditionFactory.getInstance().createConditionHolder(conditions, event);
+        ActionHolder actionHolder = ActionFactory.getInstance().createActionHolder(actions, event);
+
+        TriggerHolder triggerHolder = TriggerFactory.getInstance().createTriggerHolder(triggers, event);
+        event.getConditionHolder().populate(conditionHolder);
+        event.getActionHolder().populate(actionHolder);
+        event.getTriggerHolder().populate(triggerHolder);
+
+        register(fileName, event);
     }
 
     public Collection<ZoneEvent> getZoneEvents() {

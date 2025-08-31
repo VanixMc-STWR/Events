@@ -35,7 +35,6 @@ public class ActionFactory extends AbstractFactory<AbstractAction, Action> {
 
         for (Object item : actions) {
             if (item instanceof Map<?, ?> map) {
-                System.out.println(map);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> actionData = (Map<String, Object>) map;
 

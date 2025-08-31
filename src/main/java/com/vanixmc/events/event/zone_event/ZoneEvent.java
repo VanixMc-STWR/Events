@@ -4,22 +4,23 @@ import com.vanixmc.events.event.domain.AbstractEvent;
 import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.ConfigBuilder;
 import lombok.Getter;
-import lombok.ToString;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-// TODO: REDO, SPECIFICALLY TO REDUCE GLOBAL SCOPE TO A LIST OF PLAYERS/ENTITIES IN ZONE
+// REDUCES GLOBAL SCOPE OF ACTIONS TO A LIST OF PLAYERS/ENTITIES IN ZONE
 @Getter
-@ToString
 public class ZoneEvent extends AbstractEvent {
-    private final Set<UUID> playersInZone;
+    private final Set<UUID> playerUUIDsInZone;
     private final String regionId;
 
     public ZoneEvent(String id, String regionId) {
         super(id);
-        this.playersInZone = new HashSet<>();
+        this.playerUUIDsInZone = new HashSet<>();
         this.regionId = regionId;
     }
 
@@ -34,11 +35,18 @@ public class ZoneEvent extends AbstractEvent {
     }
 
     public void onEnter(UUID playerUUID) {
-        playersInZone.add(playerUUID);
+        playerUUIDsInZone.add(playerUUID);
     }
 
     public void onExit(UUID playerUUID) {
-        playersInZone.remove(playerUUID);
+        playerUUIDsInZone.remove(playerUUID);
+    }
+
+    public List<Player> getPlayersInZone() {
+        return playerUUIDsInZone
+                .stream()
+                .map(Bukkit::getPlayer)
+                .toList();
     }
 
     public static ConfigBuilder<Event> builder() {

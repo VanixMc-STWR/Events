@@ -35,6 +35,8 @@ public abstract class AbstractTrigger implements Trigger {
     @Override
     public void unsubscribe(Triggerable triggerable) {
         subscribers.remove(triggerable);
+
+        if (subscribers.isEmpty()) unregister();
     }
 
     @Override

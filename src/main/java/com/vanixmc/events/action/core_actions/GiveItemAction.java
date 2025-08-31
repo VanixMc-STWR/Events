@@ -24,12 +24,14 @@ public class GiveItemAction extends AbstractAction {
 
     @Override
     public boolean execute(Context context) {
-        Player player = context.getPlayer();
+        Player player = context.getPlayer() != null ? context.getPlayer() :
+                context.getEntity() instanceof Player player1 ? player1 : null;
         if (player == null) {
+            Chat.log("NULL!");
             return false;
         }
 
-        Map<Integer, ItemStack> leftovers = player.getInventory().addItem(item.clone());
+        Map<Integer, ItemStack> leftovers = player.getInventory().addItem(item);
         if (leftovers.isEmpty()) return false;
 
         dropLeftovers(player, leftovers);

@@ -18,12 +18,13 @@ public class CommandAction extends AbstractAction {
 
     @Override
     public boolean execute(Context context) {
+        String command = this.command.replace("%player%", context.getPlayer().getName());
+
         return switch (commandSender) {
             case PLAYER -> {
                 Player player = context.getPlayer();
-                if (player == null)
-                    throw new RuntimeException("Player is null in context. (ActionCommand with " + commandSender + " command sender)");
-
+                if (player == null) yield false;
+                
                 Bukkit.getServer().dispatchCommand(player, command);
                 yield true;
             }

@@ -1,8 +1,9 @@
 package com.vanixmc.events.condition.factory;
 
+import com.vanixmc.events.condition.conditions.InRegionCondition;
+import com.vanixmc.events.condition.conditions.PermissionCondition;
 import com.vanixmc.events.condition.domain.Condition;
 import com.vanixmc.events.condition.domain.ConditionHolder;
-import com.vanixmc.events.condition.permission_condition.PermissionCondition;
 import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.AbstractFactory;
 import com.vanixmc.events.shared.BuilderKey;
@@ -16,6 +17,7 @@ public class ConditionFactory extends AbstractFactory<Condition, Condition> {
     @Override
     public void registerAllBuilders() {
         registerBuilder(BuilderKey.of("permission", "perm"), PermissionCondition.builder());
+        registerBuilder(BuilderKey.of("in_region", "in_rg", "in_zone"), InRegionCondition.builder());
     }
 
     public ConditionHolder createConditionHolder(List<Object> conditions, Event event) {

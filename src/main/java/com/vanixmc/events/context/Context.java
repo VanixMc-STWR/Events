@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -20,8 +22,10 @@ import java.util.regex.Pattern;
 @Builder
 @ToString
 public class Context {
+    private Entity entity;
     private Player player;
     private Event event;
+    private Location location;
     private Triggerable triggerable;
     private org.bukkit.event.Event bukkitEvent;
     private final PersistentData persistentData = new PersistentData();

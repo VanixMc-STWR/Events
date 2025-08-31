@@ -1,6 +1,6 @@
 package com.vanixmc.events;
 
-import com.vanixmc.events.condition.permission_condition.PermissionCondition;
+import com.vanixmc.events.condition.conditions.PermissionCondition;
 import com.vanixmc.events.context.Context;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;

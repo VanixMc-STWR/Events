@@ -1,4 +1,4 @@
-package com.vanixmc.events.trigger.impl.listener_triggers;
+package com.vanixmc.events.trigger.triggers.listener_triggers;
 
 import com.vanixmc.events.EventsPlugin;
 import com.vanixmc.events.trigger.domain.AbstractTrigger;

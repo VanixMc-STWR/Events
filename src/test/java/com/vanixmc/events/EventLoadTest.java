@@ -1,172 +1,150 @@
 //package com.vanixmc.events;
 //
-//import com.vanixmc.events.action.domain.Action;
 //import com.vanixmc.events.action.domain.ActionHolder;
 //import com.vanixmc.events.action.factory.ActionFactory;
-//import com.vanixmc.events.action.message_action.MessageFormat;
-//import com.vanixmc.events.action.message_action.PlayerMessageAction;
-//import com.vanixmc.events.condition.domain.Condition;
 //import com.vanixmc.events.condition.domain.ConditionHolder;
 //import com.vanixmc.events.condition.factory.ConditionFactory;
-//import com.vanixmc.events.condition.permission_condition.PermissionCondition;
 //import com.vanixmc.events.event.domain.Event;
 //import com.vanixmc.events.event.domain.EventType;
-//import com.vanixmc.events.event.zone_event.ZoneEvent;
+//import com.vanixmc.events.shared.ConfigBuilder;
 //import com.vanixmc.events.shared.DomainConfig;
+//import com.vanixmc.events.trigger.domain.AbstractTrigger;
+//import com.vanixmc.events.trigger.domain.Trigger;
+//import com.vanixmc.events.trigger.domain.TriggerHolder;
+//import com.vanixmc.events.trigger.factory.TriggerFactory;
+//import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
+//import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
+//import org.bukkit.Bukkit;
+//import org.bukkit.Server;
+//import org.bukkit.UnsafeValues;
+//import org.bukkit.World;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
+//import org.mockito.Mock;
+//import org.mockito.MockedStatic;
+//import org.mockito.Mockito;
+//import org.mockito.MockitoAnnotations;
 //import org.yaml.snakeyaml.Yaml;
 //
+//import java.io.IOException;
 //import java.io.InputStream;
+//import java.util.ArrayList;
 //import java.util.List;
 //import java.util.Map;
+//import java.util.UUID;
 //
-//import static org.junit.jupiter.api.Assertions.*;
+//import static org.mockito.Mockito.when;
 //
-//@SuppressWarnings("unchecked")
 //public class EventLoadTest {
 //    private ActionFactory actionFactory;
 //    private ConditionFactory conditionFactory;
 //
+//    @Mock
+//    EventsPlugin eventsPlugin;
+//
+//    @Mock
+//    Server server;
+//
+//    @Mock
+//    World world;
+//
+//    @Mock
+//    UnsafeValues unsafeValues;
+//
 //    @BeforeEach
 //    public void setup() {
-//        // Initialize ActionFactory
-//        this.actionFactory = new ActionFactory();
-//        this.actionFactory.registerAllActionTypes();
-//
-//        // Load and register reusable actions
-//        Yaml yaml = new Yaml();
-//        InputStream actionsStream = getClass().getClassLoader().getResourceAsStream("actions.yml");
-//        Map<String, Object> actionData = yaml.load(actionsStream);
-//        assertNotNull(actionData);
-//
-//        Map<String, Map<String, Object>> actions = (Map<String, Map<String, Object>>) actionData.get("actions");
-//        actionFactory.registerAll(actions);
-//
-//        // Initialize ConditionFactory
-//        this.conditionFactory = new ConditionFactory();
-//        this.conditionFactory.registerAllConditionTypes();
-//
-//        // Load and register reusable conditions
-//        InputStream conditionsStream = getClass().getClassLoader().getResourceAsStream("conditions.yml");
-//        Map<String, Object> conditionData = yaml.load(conditionsStream);
-//        assertNotNull(conditionData);
-//
-//        Map<String, Map<String, Object>> conditions = (Map<String, Map<String, Object>>) conditionData.get("conditions");
-//        conditionFactory.registerAll(conditions);
+//        MockitoAnnotations.openMocks(this);
 //    }
 //
 //    @Test
-//    public void testEventLoadsWithActions() {
-//        // Load the test event from YAML
-//        Yaml yaml = new Yaml();
-//        InputStream eventStream = getClass().getClassLoader().getResourceAsStream("test-event.yml");
-//        Map<String, Object> eventData = yaml.load(eventStream);
-//        assertNotNull(eventData);
-//
-//        // Create a DomainConfig from the event data
-//        DomainConfig config = new DomainConfig();
-//        config.getConfig().putAll(eventData);
-//
-//        // Verify event type
-//        assertEquals(EventType.ZONE, EventType.valueOf(config.getUppercaseString("type")));
-//        assertEquals("on_enter", config.getString("trigger"));
-//
-//        // Extract actions from config
-//        List<Object> actionsList = config.getObjectList("actions");
-//        assertNotNull(actionsList);
-//        assertEquals(2, actionsList.size());
-//
-//        // Create ActionHolder with the actions
-//        ActionHolder actionHolder = actionFactory.createActionHolder(actionsList);
-//        assertNotNull(actionHolder);
-//
-//        // Build the event (normally this would use EventRegistry and builder pattern)
-//        Event event = ZoneEvent.builder().build(config);
-//        assertNotNull(event);
-//        assertInstanceOf(ZoneEvent.class, event);
-//
-//        // Verify actions in the event's ActionHolder
-//        ActionHolder eventActionHolder = event.getActionHolder();
-//        assertNotNull(eventActionHolder);
-//
-//        List<Action> actions = eventActionHolder.getActions();
-//        System.out.println(actions);
-//        assertEquals(2, actions.size());
-//
-//        // Verify the first action (from reusable epic-reward)
-//        Action firstAction = actions.getFirst();
-//        assertInstanceOf(PlayerMessageAction.class, firstAction);
-//        PlayerMessageAction messageAction1 = (PlayerMessageAction) firstAction;
-//        assertEquals(MessageFormat.CHAT, messageAction1.getFormat());
-//        assertEquals("Hello, Epic World!!!", messageAction1.getMessage());
-//
-//        // Verify the second action (inline PlayerMessage)
-//        Action secondAction = actions.get(1);
-//        assertInstanceOf(PlayerMessageAction.class, secondAction);
-//        PlayerMessageAction messageAction2 = (PlayerMessageAction) secondAction;
-//        assertEquals(MessageFormat.TITLE, messageAction2.getFormat());
-//        assertEquals("You've entered the region!", messageAction2.getMessage());
-//
-//        System.out.println(event);
+//    public void testEventLoadsWithLocation() {
+//        try (MockedStatic<Bukkit> bukkit = Mockito.mockStatic(Bukkit.class)) {
+//            bukkit.when(Bukkit::getServer).thenReturn(server);
+//            when(Bukkit.getWorld("world")).thenReturn(world);
+//            System.out.println(loadEvent("test-event.yml"));
+//        }
 //    }
 //
-//    @Test
-//    public void testEventLoadsWithConditions() {
-//        // Load the test event from YAML
-//        Yaml yaml = new Yaml();
-//        InputStream eventStream = getClass().getClassLoader().getResourceAsStream("test-event.yml");
-//        Map<String, Object> eventData = yaml.load(eventStream);
-//        assertNotNull(eventData);
+//    private Event loadEvent(String fileName) {
+//        Map<String, Object> data = load(fileName);
+//        DomainConfig config = new DomainConfig(data);
 //
-//        // Create a DomainConfig from the event data
-//        DomainConfig config = new DomainConfig();
-//        config.getConfig().put("id", "test-event");
-//        config.getConfig().putAll(eventData);
+//        // Put the id in so it's in the built event
+//        config.getConfig().put("id", fileName);
 //
-//        // Verify event type and basic properties
-//        assertEquals(EventType.ZONE, EventType.valueOf(config.getUppercaseString("type")));
-//        assertEquals("on_enter", config.getString("trigger"));
+//        EventType type = EventType.valueOf(config.getUppercaseString("type"));
+//        ConfigBuilder<Event> builder = type.getBuilder();
 //
-//        // Extract conditions from config
-//        List<Object> conditionsList = config.getObjectList("conditions");
-//        assertNotNull(conditionsList);
-//        assertEquals(2, conditionsList.size());
+//        if (builder == null) {
+//            throw new IllegalArgumentException("Unknown action type: " + type);
+//        }
 //
-//        // Create ConditionHolder with the conditions
-//        ConditionHolder conditionHolder = conditionFactory.createConditionHolder(conditionsList);
-//        assertNotNull(conditionHolder);
+//        Event event = builder.build(config);
+//        List<Object> triggers = config.getObjectList("triggers");
+//        List<Object> conditions = config.getObjectList("conditions");
+//        List<Object> actions = config.getObjectList("actions");
 //
-//        // Verify conditions loaded correctly
-//        List<Condition> conditions = conditionHolder.getConditions();
-//        assertEquals(2, conditions.size());
+//        ConditionHolder conditionHolder = ConditionFactory.getInstance().createConditionHolder(conditions, event);
+//        ActionHolder actionHolder = ActionFactory.getInstance().createActionHolder(actions, event);
 //
-//        // First condition should be a composite AND condition
-//        Condition firstCondition = conditions.getFirst();
-//        // This should be a composite "AND" condition (player-has-perms and test2)
-//        // We can't directly assert the type since it's likely an anonymous class from the and() method
-//        // But we can check if it's not a PermissionCondition
-//        assertFalse(firstCondition instanceof PermissionCondition);
+//        TriggerHolder triggerHolder = createTriggerHolder(triggers);
+//        event.getConditionHolder().populate(conditionHolder);
+//        event.getActionHolder().populate(actionHolder);
+//        event.getTriggerHolder().populate(triggerHolder);
 //
-//        // Second condition should be a simple permission condition
-//        Condition secondCondition = conditions.get(1);
-//        assertInstanceOf(PermissionCondition.class, secondCondition);
-//        PermissionCondition permCondition = (PermissionCondition) secondCondition;
-//        assertEquals("test.perm", permCondition.getPermission());
+//        return event;
+//    }
 //
-//        // Build the event with the action and condition factories
-//        Event event = ZoneEvent.builder().build(config);
+//    private Map<String, Object> load(String name) {
+//        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(name)) {
+//            Yaml yml = new Yaml();
+//            return yml.load(inputStream);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 //
-//        assertNotNull(event);
-//        assertInstanceOf(ZoneEvent.class, event);
+//    private TriggerHolder createTriggerHolder(List<Object> triggers) {
+//        List<Trigger> resolvedTriggers = new ArrayList<>();
 //
-//        // Verify the event has the correct conditions
-//        ConditionHolder eventConditionHolder = event.getConditionHolder();
-//        assertNotNull(eventConditionHolder);
+//        for (Object item : triggers) {
+//            if (item instanceof Map<?, ?> map) {
+//                @SuppressWarnings("unchecked")
+//                Map<String, Object> triggerData = (Map<String, Object>) map;
 //
-//        List<Condition> eventConditions = eventConditionHolder.getConditions();
-//        assertEquals(2, eventConditions.size());
+//                // Inline trigger
+//                String tempKey = UUID.randomUUID().toString(); // Temp key for resolving
+//                Map<String, Map<String, Object>> wrapper = Map.of(tempKey, triggerData);
+//                Trigger inlineTrigger = create(tempKey, wrapper);
+//                resolvedTriggers.add(inlineTrigger);
+//            } else {
+//                throw new IllegalArgumentException("Trigger entry must be a map: " + item);
+//            }
+//        }
+//        return new TriggerHolder(resolvedTriggers);
+//    }
 //
-//        System.out.println(conditionHolder);
+//    private AbstractTrigger create(String key, Map<String, Map<String, Object>> fileData) {
+//        DomainConfig config = ConfigBuilder.resolveConfig(key, fileData);
+//        String type = config.getString("type");
+//        ConfigBuilder<AbstractTrigger> builder = TriggerFactory.getInstance().getBuilder(type);
+//
+//        if (builder == null) {
+//            throw new IllegalArgumentException("Unknown condition type: " + type);
+//        }
+//
+//        Object triggerModeFromConfig = config.getObject("mode");
+//        TriggerMode triggerMode;
+//
+//        if (triggerModeFromConfig == null) {
+//            ConfigBuilder<TriggerMode> triggerModeBuilder = TriggerModeFactory.getInstance()
+//                    .getBuilder("inf");
+//            triggerMode = triggerModeBuilder.build(new DomainConfig());
+//        } else {
+//            triggerMode = TriggerModeFactory.getInstance().getTriggerMode(triggerModeFromConfig);
+//        }
+//        AbstractTrigger trigger = builder.build(config);
+//        trigger.setTriggerMode(triggerMode);
+//        return trigger;
 //    }
 //}

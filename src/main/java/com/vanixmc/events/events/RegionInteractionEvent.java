@@ -1,7 +1,7 @@
 package com.vanixmc.events.events;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.vanixmc.events.trigger.impl.listener_triggers.region_trigger.RegionInteractionType;
+import com.vanixmc.events.trigger.triggers.listener_triggers.region_trigger.RegionInteractionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;

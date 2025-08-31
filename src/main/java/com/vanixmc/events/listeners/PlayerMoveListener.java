@@ -2,7 +2,7 @@ package com.vanixmc.events.listeners;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.vanixmc.events.events.RegionInteractionEvent;
-import com.vanixmc.events.trigger.impl.listener_triggers.region_trigger.RegionInteractionType;
+import com.vanixmc.events.trigger.triggers.listener_triggers.region_trigger.RegionInteractionType;
 import com.vanixmc.events.util.RegionUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
