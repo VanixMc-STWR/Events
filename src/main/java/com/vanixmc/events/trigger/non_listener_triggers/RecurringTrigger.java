@@ -57,7 +57,6 @@ public class RecurringTrigger extends AbstractTrigger {
 
             int repetitions = config.parseRepetitions();
 
-
             return new RecurringTrigger(id, interval, delay, repetitions);
         };
     }

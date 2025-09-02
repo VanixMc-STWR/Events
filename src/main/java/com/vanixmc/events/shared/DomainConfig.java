@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @ToString
@@ -100,16 +103,60 @@ public class DomainConfig {
     }
 
     public TickTime parseTime(String key) {
-        return null;
+        Object value = config.get(key);
+
+        if (value == null) return null;
+
+        String tickTimeString = (String)value;
+
+        //  regex separates digits from letters,
+        //  and reads regardless of whitespace.
+        Pattern TIME_PATTERN =
+                Pattern.compile("^\\s*(\\d+)\\s*(\\w+)\\s*$");
+
+        Matcher matcher = TIME_PATTERN.matcher(tickTimeString);
+
+        if (!matcher.matches()) {
+            String errorMessage = String.format("Invalid %s entry: %s, use format [duration integer] [time unit string]",
+                    key, tickTimeString);
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        int duration = Integer.parseInt(matcher.group(1));
+
+        String timeUnitString = matcher.group(2);
+
+        TimeUnit timeUnit = parseTimeUnit(timeUnitString);
+
+        return new TickTime(duration, timeUnit);
+    }
+
+    public TimeUnit parseTimeUnit(String unit) {
+        return switch (unit) {
+            case "ms", "millisecond", "milliseconds" -> TimeUnit.MILLISECONDS;
+            case "s", "second", "seconds"             -> TimeUnit.SECONDS;
+            case "m", "minute", "minutes"             -> TimeUnit.MINUTES;
+            case "h", "hour", "hours"                 -> TimeUnit.HOURS;
+            case "d", "day", "days"                   -> TimeUnit.DAYS;
+            default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
+        };
     }
 
     /**
      * Retrieves the amount of repetitions from config section "repetitions".
      *
-     * @return the amount of repetitions, or '-1' for infinite repetitions.
+     * @return the amount of repetitions, '-1' for infinite repetitions, and '-2' to represent an error flag.
      */
     public int parseRepetitions() {
+        Object value = config.get("repetitions");
 
-        return 0;
+        if (value == null) return 0;
+
+        String repetitionString = (String)value;
+
+        if (!repetitionString.matches("^-?\\d+$"))
+            throw new IllegalArgumentException("Invalid repetition entry: %s, entry requires an integer");
+
+        return Integer.parseInt(repetitionString);
     }
 }
