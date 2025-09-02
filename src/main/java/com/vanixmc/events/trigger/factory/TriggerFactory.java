@@ -8,6 +8,7 @@ import com.vanixmc.events.trigger.domain.AbstractTrigger;
 import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.Triggerable;
+import com.vanixmc.events.trigger.non_listener_triggers.RecurringTrigger;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
 import com.vanixmc.events.trigger.triggers.listener_triggers.EntityKilledTrigger;
@@ -28,6 +29,7 @@ public class TriggerFactory extends AbstractFactory<AbstractTrigger, Trigger> {
         registerBuilder(BuilderKey.of("region_interact", "region_int", "rg_int"), RegionInteractTrigger.builder());
         registerBuilder(BuilderKey.of("player_interact", "p_interact"), PlayerInteractTrigger.builder());
         registerBuilder(BuilderKey.of("entity_kill_entity", "e_kill_e"), EntityKilledTrigger.builder());
+        registerBuilder(BuilderKey.of("recurring"), RecurringTrigger.builder());
     }
 
     @Override

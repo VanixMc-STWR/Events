@@ -1,5 +1,7 @@
 package com.vanixmc.events.shared;
 
+import com.ibm.icu.util.TimeUnitAmount;
+import com.vanixmc.events.exceptions.NoBuilderDefinedException;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.Location;
@@ -95,5 +97,19 @@ public class DomainConfig {
     public Location getLocation(String key) {
         Object value = config.get(key);
         return Location.deserialize((Map<String, Object>) value);
+    }
+
+    public TickTime parseTime(String key) {
+        return null;
+    }
+
+    /**
+     * Retrieves the amount of repetitions from config section "repetitions".
+     *
+     * @return the amount of repetitions, or '-1' for infinite repetitions.
+     */
+    public int parseRepetitions() {
+
+        return 0;
     }
 }
