@@ -15,8 +15,7 @@ public class RegionInteractTrigger extends ListenerTrigger {
     private final RegionInteractionType interactionType;
     private final String regionId;
 
-    public RegionInteractTrigger(String id, String regionId, RegionInteractionType interactionType) {
-        super(id);
+    public RegionInteractTrigger(String regionId, RegionInteractionType interactionType) {
         this.interactionType = interactionType;
         this.regionId = regionId;
     }
@@ -57,7 +56,6 @@ public class RegionInteractTrigger extends ListenerTrigger {
 
     public static ConfigBuilder<AbstractTrigger> builder() {
         return config -> {
-            String id = config.getId();
             String regionId = config.getString("region-id");
 
             String typeStr = config.getUppercaseString("interaction");
@@ -69,7 +67,7 @@ public class RegionInteractTrigger extends ListenerTrigger {
                 interactionType = RegionInteractionType.ENTER;
             }
 
-            return new RegionInteractTrigger(id, regionId, interactionType);
+            return new RegionInteractTrigger(regionId, interactionType);
         };
     }
 }

@@ -3,6 +3,7 @@ package com.vanixmc.events.action.factory;
 import com.vanixmc.events.action.core_actions.*;
 import com.vanixmc.events.action.core_actions.command_action.CommandAction;
 import com.vanixmc.events.action.core_actions.message_action.MessageAction;
+import com.vanixmc.events.action.core_actions.money_action.BankOperationAction;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
@@ -70,6 +71,7 @@ public class ActionFactory extends AbstractFactory<AbstractAction, Action> {
         registerBuilder(BuilderKey.of("command", "cmd"), CommandAction.builder());
         registerBuilder(BuilderKey.of("give_item", "item_give", "give_i"), GiveItemAction.builder());
         registerBuilder(BuilderKey.of("play_sound", "play_s", "ps"), PlaySoundAction.builder());
+        registerBuilder(BuilderKey.of("bank_operation", "bank", "money", "$"), BankOperationAction.builder());
     }
 
     @Override

@@ -14,8 +14,7 @@ public class EntityKilledTrigger extends ListenerTrigger {
     private final EntityType killerType;
     private final EntityType victimType;
 
-    public EntityKilledTrigger(String id, EntityType killerType, EntityType victimType) {
-        super(id);
+    public EntityKilledTrigger(EntityType killerType, EntityType victimType) {
         this.killerType = killerType;
         this.victimType = victimType;
     }
@@ -40,7 +39,6 @@ public class EntityKilledTrigger extends ListenerTrigger {
 
     public static ConfigBuilder<AbstractTrigger> builder() {
         return config -> {
-            String id = config.getId();
             String killerTypeString = config.getUppercaseString("killer-entity");
             String victimTypeString = config.getUppercaseString("victim-entity");
 
@@ -61,7 +59,7 @@ public class EntityKilledTrigger extends ListenerTrigger {
             }
 
 
-            return new EntityKilledTrigger(id, killerType, victimType);
+            return new EntityKilledTrigger(killerType, victimType);
         };
     }
 }

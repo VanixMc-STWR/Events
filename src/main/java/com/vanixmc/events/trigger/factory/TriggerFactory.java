@@ -39,19 +39,20 @@ public class TriggerFactory extends AbstractFactory<AbstractTrigger, Trigger> {
         if (builder == null) {
             throw new IllegalArgumentException("Unknown condition type: " + type);
         }
-
         Object triggerModeFromConfig = config.getObject("mode");
         TriggerMode triggerMode;
 
+        TriggerModeFactory triggerModeFactory = TriggerModeFactory.getInstance();
         if (triggerModeFromConfig == null) {
-            ConfigBuilder<TriggerMode> triggerModeBuilder = TriggerModeFactory.getInstance()
+            ConfigBuilder<TriggerMode> triggerModeBuilder = triggerModeFactory
                     .getBuilder("inf");
             triggerMode = triggerModeBuilder.build(new DomainConfig());
         } else {
-            triggerMode = TriggerModeFactory.getInstance().getTriggerMode(triggerModeFromConfig);
+            triggerMode = triggerModeFactory.getTriggerMode(triggerModeFromConfig);
         }
         AbstractTrigger trigger = builder.build(config);
         trigger.setTriggerMode(triggerMode);
+        trigger.setId(config.getId());
         return trigger;
     }
 

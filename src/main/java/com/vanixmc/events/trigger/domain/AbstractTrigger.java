@@ -8,15 +8,13 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
 public abstract class AbstractTrigger implements Trigger {
     private final List<Triggerable> subscribers;
-    private final String id;
-
-    @Setter
     private TriggerMode triggerMode;
+    private String id;
 
-    public AbstractTrigger(String id) {
-        this.id = id;
+    public AbstractTrigger() {
         this.subscribers = new ArrayList<>();
     }
 

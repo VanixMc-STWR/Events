@@ -1,12 +1,17 @@
 package com.vanixmc.events;
 
 import com.vanixmc.events.condition.conditions.PermissionCondition;
+import com.vanixmc.events.condition.evaluator.Evaluator;
 import com.vanixmc.events.context.Context;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,6 +24,12 @@ public class PermissionConditionTest {
     @Mock
     private Context context;
 
+    @Mock
+    Server server;
+
+    @Mock
+    Logger logger;
+
     private final String testPermission = "test.permission";
     private PermissionCondition permissionCondition;
 
@@ -28,7 +39,7 @@ public class PermissionConditionTest {
         // Setup the EventContext to return our mocked player
         when(context.getPlayer()).thenReturn(player);
         // Create the permission condition with our test permission
-        permissionCondition = new PermissionCondition(testPermission);
+        permissionCondition = new PermissionCondition(Evaluator.EQUAL, testPermission);
     }
 
     @Test
@@ -75,10 +86,15 @@ public class PermissionConditionTest {
         com.vanixmc.events.shared.DomainConfig config = new com.vanixmc.events.shared.DomainConfig();
         config.getConfig().put("permission", testPermission);
 
-        // Build the condition using the builder
-        PermissionCondition condition = (PermissionCondition) PermissionCondition.builder().build(config);
+        try (var mockedBukkit = mockStatic(Bukkit.class)) {
+            mockedBukkit.when(Bukkit::getServer).thenReturn(server);
+            mockedBukkit.when(server::getLogger).thenReturn(logger);
 
-        // Assert the permission is set correctly
-        assertEquals(testPermission, condition.getPermission());
+            // Build the condition using the builder
+            PermissionCondition condition = (PermissionCondition) PermissionCondition.builder().build(config);
+
+            // Assert the permission is set correctly
+            assertEquals(testPermission, condition.getPermission());
+        }
     }
 }
