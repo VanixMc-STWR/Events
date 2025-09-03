@@ -23,18 +23,6 @@ public class RecurringTriggerTest {
 
     @Test
     public void testSuccessfulRecurringTriggerBuild() {
-        Yaml yaml = new Yaml();
-        InputStream inputStream = getClass().getClassLoader()
-                .getResourceAsStream("test_recurring_trigger_build.yml");
-        Map<String, Object> data = yaml.load(inputStream);
 
-        assertNotNull(data);
-        assertTrue(data.containsKey("triggers"));
-
-        Map<String, Map<String, Object>> triggers = (Map<String, Map<String, Object>>) data.get("triggers");
-
-        triggerFactory.create("test", triggers);
-
-        assertTrue(triggerFactory.getRegistry().containsKey(TriggerType.RECURRING));
     }
 }

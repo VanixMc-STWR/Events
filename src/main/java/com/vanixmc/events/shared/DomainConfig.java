@@ -102,6 +102,12 @@ public class DomainConfig {
         return Location.deserialize((Map<String, Object>) value);
     }
 
+    /**
+     * Parses time data from configuration and returns a TickTime object representing
+     * said time in ticks.
+     *
+     * @return TickTime object representing String time data in ticks.
+     */
     public TickTime parseTime(String key) {
         Object value = config.get(key);
 
@@ -131,6 +137,12 @@ public class DomainConfig {
         return new TickTime(duration, timeUnit);
     }
 
+    /**
+     * Retrieves the Java TimeUnit enum value corresponding to string representations of time measurements.
+     * Supports milliseconds, seconds, minutes, hours, and days.
+     *
+     * @return The TimeUnit object containing the desired time measurement as its unit.
+     */
     public TimeUnit parseTimeUnit(String unit) {
         return switch (unit) {
             case "ms", "millisecond", "milliseconds" -> TimeUnit.MILLISECONDS;
@@ -148,15 +160,12 @@ public class DomainConfig {
      * @return the amount of repetitions, '-1' for infinite repetitions, and '-2' to represent an error flag.
      */
     public int parseRepetitions() {
-        Object value = config.get("repetitions");
 
-        if (value == null) return 0;
+        String repetitions = getString("repetitions");
 
-        String repetitionString = (String)value;
-
-        if (!repetitionString.matches("^-?\\d+$"))
+        if (!repetitions.matches("^-?\\d+$"))
             throw new IllegalArgumentException("Invalid repetition entry: %s, entry requires an integer");
 
-        return Integer.parseInt(repetitionString);
+        return Integer.parseInt(repetitions);
     }
 }
