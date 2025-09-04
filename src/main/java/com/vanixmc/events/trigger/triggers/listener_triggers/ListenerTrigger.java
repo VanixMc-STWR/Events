@@ -7,10 +7,6 @@ import org.bukkit.event.Listener;
 
 public class ListenerTrigger extends AbstractTrigger implements Listener {
 
-    public ListenerTrigger(String id) {
-        super(id);
-    }
-
     @Override
     public void register() {
         EventsPlugin eventsPlugin = EventsPlugin.getInstance();

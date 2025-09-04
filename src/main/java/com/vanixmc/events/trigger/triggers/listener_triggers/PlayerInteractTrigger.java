@@ -16,8 +16,7 @@ public class PlayerInteractTrigger extends ListenerTrigger {
     private final Location interactionLocation;
     private final Action action;
 
-    public PlayerInteractTrigger(String id, Location interactionLocation, Action action) {
-        super(id);
+    public PlayerInteractTrigger(Location interactionLocation, Action action) {
         this.interactionLocation = interactionLocation;
         this.action = action;
     }
@@ -59,7 +58,6 @@ public class PlayerInteractTrigger extends ListenerTrigger {
 
     public static ConfigBuilder<AbstractTrigger> builder() {
         return config -> {
-            String id = config.getId();
             Location location = config.getLocation("action-location");
             String actionString = config.getUppercaseString("action");
 
@@ -71,7 +69,7 @@ public class PlayerInteractTrigger extends ListenerTrigger {
                 throw e;
             }
 
-            return new PlayerInteractTrigger(id, location, action);
+            return new PlayerInteractTrigger(location, action);
         };
     }
 }

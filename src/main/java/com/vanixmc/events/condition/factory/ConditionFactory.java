@@ -1,5 +1,6 @@
 package com.vanixmc.events.condition.factory;
 
+import com.vanixmc.events.condition.conditions.HasMoneyCondition;
 import com.vanixmc.events.condition.conditions.InRegionCondition;
 import com.vanixmc.events.condition.conditions.PermissionCondition;
 import com.vanixmc.events.condition.domain.Condition;
@@ -18,6 +19,7 @@ public class ConditionFactory extends AbstractFactory<Condition, Condition> {
     public void registerAllBuilders() {
         registerBuilder(BuilderKey.of("permission", "perm"), PermissionCondition.builder());
         registerBuilder(BuilderKey.of("in_region", "in_rg", "in_zone"), InRegionCondition.builder());
+        registerBuilder(BuilderKey.of("has_money", "has_$", "$"), HasMoneyCondition.builder());
     }
 
     public ConditionHolder createConditionHolder(List<Object> conditions, Event event) {

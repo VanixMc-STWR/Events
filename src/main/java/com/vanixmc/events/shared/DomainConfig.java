@@ -61,6 +61,10 @@ public class DomainConfig {
         return (Long) config.get(key);
     }
 
+    public Double getDouble(String key) {
+        return (Double) config.get(key);
+    }
+
     public Boolean getBoolean(String key) {
         Object value = config.get(key);
         return value instanceof Boolean ? (Boolean) value : null;
