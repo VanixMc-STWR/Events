@@ -110,7 +110,7 @@ public class DomainConfig {
      * Parses time data from configuration and returns a TickTime object representing
      * said time in ticks.
      *
-     * @return TickTime object representing String time data in ticks.
+     * @return {@link TickTime} object representing String time data in ticks.
      */
     public TickTime parseTime(String key) {
         Object value = config.get(key);
@@ -161,15 +161,26 @@ public class DomainConfig {
     /**
      * Retrieves the amount of repetitions from config section "repetitions".
      *
-     * @return the amount of repetitions, '-1' for infinite repetitions, and '-2' to represent an error flag.
+     * @throws IllegalArgumentException for invalid input.
+     * @return the amount of repetitions and '-1' for infinite repetitions.
      */
     public int parseRepetitions() {
 
         String repetitions = getString("repetitions");
 
-        if (!repetitions.matches("^-?\\d+$"))
-            throw new IllegalArgumentException("Invalid repetition entry: %s, entry requires an integer");
+        if (repetitions.equalsIgnoreCase("inf") ||
+            repetitions.equalsIgnoreCase("infinity")) {
+            return -1;
+        }
 
-        return Integer.parseInt(repetitions);
+        int repetition;
+
+        try {
+            repetition = Integer.parseInt(repetitions);
+        } catch(NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid repetition entry: %s, entry requires an integer, 'inf', or 'infinity'");
+        }
+
+        return repetition;
     }
 }
