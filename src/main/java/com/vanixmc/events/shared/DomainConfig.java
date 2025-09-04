@@ -181,6 +181,8 @@ public class DomainConfig {
             throw new IllegalArgumentException("Invalid repetition entry: %s, entry requires an integer, 'inf', or 'infinity'");
         }
 
+        if (repetition <= 0) throw new IllegalArgumentException("Invalid repetition entry: %s, if integer value, entry must be a positive non-zero integer.");
+
         return repetition;
     }
 }
