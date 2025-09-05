@@ -12,8 +12,8 @@ import lombok.ToString;
 @ToString
 public abstract class AbstractEvent implements Event {
     private final String id;
-    private final ConditionHolder conditionHolder;
-    private final ActionHolder actionHolder;
+    protected final ConditionHolder conditionHolder;
+    protected final ActionHolder actionHolder;
     private final TriggerHolder triggerHolder;
     private final Context.PersistentData persistentData;
 

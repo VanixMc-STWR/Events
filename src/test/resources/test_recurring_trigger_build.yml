@@ -1,0 +1,10 @@
+type: zone
+region-id: "test"
+triggers:
+  - type: recurring
+    interval: 3 seconds
+    delay: 3 seconds
+    repetitions: 4
+    mode:
+      type: "1"
+actions:

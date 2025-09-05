@@ -1,5 +1,6 @@
 package com.vanixmc.events.event.zone_event;
 
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.event.domain.AbstractEvent;
 import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.shared.ConfigBuilder;
@@ -32,6 +33,18 @@ public class ZoneEvent extends AbstractEvent {
     @Override
     public boolean stop() {
         return false;
+    }
+
+    @Override
+    public boolean execute(Context context) {
+        if (context.getPlayer() == null) {
+            for (Player player : getPlayersInZone()) {
+                Context playerContext = new Context(context);
+                playerContext.setPlayer(player);
+                return super.execute(playerContext);
+            }
+        }
+        return super.execute(context);
     }
 
     public void onEnter(UUID playerUUID) {

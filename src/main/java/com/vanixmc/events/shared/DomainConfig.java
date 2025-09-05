@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @ToString
@@ -99,5 +102,57 @@ public class DomainConfig {
     public Location getLocation(String key) {
         Object value = config.get(key);
         return Location.deserialize((Map<String, Object>) value);
+    }
+
+    /**
+     * Parses time data from configuration and returns a TickTime object representing
+     * said time in ticks.
+     *
+     * @return {@link TickTime} object representing String time data in ticks.
+     */
+    public TickTime parseTime(String key) {
+        Object value = config.get(key);
+
+        if (value == null) return null;
+
+        String tickTimeString = (String) value;
+
+        //  regex separates digits from letters,
+        //  and reads regardless of whitespace.
+        Pattern TIME_PATTERN =
+                Pattern.compile("^\\s*(\\d+)\\s*(\\w+)\\s*$");
+
+        Matcher matcher = TIME_PATTERN.matcher(tickTimeString);
+
+        if (!matcher.matches()) {
+            String errorMessage = String.format("Invalid %s entry: %s, use format [duration integer] [time unit string]",
+                    key, tickTimeString);
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        int duration = Integer.parseInt(matcher.group(1));
+
+        String timeUnitString = matcher.group(2);
+
+        TimeUnit timeUnit = parseTimeUnit(timeUnitString);
+
+        return new TickTime(duration, timeUnit);
+    }
+
+    /**
+     * Retrieves the Java TimeUnit enum value corresponding to string representations of time measurements.
+     * Supports milliseconds, seconds, minutes, hours, and days.
+     *
+     * @return The TimeUnit object containing the desired time measurement as its unit.
+     */
+    private TimeUnit parseTimeUnit(String unit) {
+        return switch (unit) {
+            case "ms", "millisecond", "milliseconds" -> TimeUnit.MILLISECONDS;
+            case "s", "second", "seconds" -> TimeUnit.SECONDS;
+            case "m", "minute", "minutes" -> TimeUnit.MINUTES;
+            case "h", "hour", "hours" -> TimeUnit.HOURS;
+            case "d", "day", "days" -> TimeUnit.DAYS;
+            default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
+        };
     }
 }

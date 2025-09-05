@@ -1,6 +1,7 @@
 package com.vanixmc.events.context;
 
 import com.vanixmc.events.event.domain.Event;
+import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.Triggerable;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,13 +23,33 @@ import java.util.regex.Pattern;
 @Builder
 @ToString
 public class Context {
-    private Entity entity;
     private Player player;
+    private Entity entity;
     private Event event;
     private Location location;
     private Triggerable triggerable;
+    private Trigger trigger;
     private org.bukkit.event.Event bukkitEvent;
-    private final PersistentData persistentData = new PersistentData();
+
+    @Builder.Default
+    private PersistentData persistentData = new PersistentData();
+
+    public Context(Context context) {
+        this.player = context.player;
+        this.entity = context.entity;
+        this.event = context.event;
+        this.location = context.location;
+        this.triggerable = context.triggerable;
+        this.trigger = context.trigger;
+        this.bukkitEvent = context.bukkitEvent;
+        this.persistentData = new PersistentData(context.persistentData);
+    }
+
+    public Player getPlayer() {
+        if (player != null) return player;
+        if (entity != null && entity instanceof Player entityPlayer) return entityPlayer;
+        return null;
+    }
 
     public static class PersistentData {
         private static final Pattern VAR_PATTERN = Pattern.compile("\\$\\{([\\w-]+)}");
@@ -36,6 +57,10 @@ public class Context {
 
         public PersistentData() {
             this.contextMap = new HashMap<>();
+        }
+
+        public PersistentData(PersistentData persistentData) {
+            this.contextMap = new HashMap<>(persistentData.contextMap);
         }
 
         public void addContext(String key, Object value) {
@@ -67,6 +92,5 @@ public class Context {
             matcher.appendTail(result);
             return result.toString();
         }
-
     }
 }
