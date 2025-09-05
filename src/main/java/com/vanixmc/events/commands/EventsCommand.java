@@ -21,6 +21,6 @@ public class EventsCommand extends BaseCommand {
     @Subcommand("admin reload-events")
     public void onReloadEvents(CommandSender sender) {
         EventFactory.getInstance()
-                .loadAllEvents();
+                .loadAllEvents(true);
     }
 }

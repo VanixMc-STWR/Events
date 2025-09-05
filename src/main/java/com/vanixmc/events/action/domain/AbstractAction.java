@@ -42,4 +42,16 @@ public abstract class AbstractAction implements Action {
         return event != null && event instanceof ZoneEvent zoneEvent ? zoneEvent.getPlayersInZone() :
                 new ArrayList<>(Bukkit.getOnlinePlayers());
     }
+
+    protected Player getPlayerFromContext(Context context) {
+        if (context.getPlayer() != null) {
+            return context.getPlayer();
+        }
+
+        if (context.getEntity() != null && context.getEntity() instanceof Player player) {
+            return player;
+        }
+
+        throw new RuntimeException("Player is null in event context for PLAYER audience. (MessageAction)");
+    }
 }

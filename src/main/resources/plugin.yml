@@ -2,3 +2,5 @@ name: StarEvents
 version: '0.0.1'
 main: com.vanixmc.events.EventsPlugin
 api-version: '1.21'
+softdepend:
+  - Vault

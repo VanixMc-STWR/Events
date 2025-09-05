@@ -22,10 +22,10 @@ public final class EventsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        setupEconomy();
         initFactories();
         registerCommands();
         registerListeners();
-        setupEconomy();
     }
 
     @Override
@@ -41,7 +41,7 @@ public final class EventsPlugin extends JavaPlugin {
     }
 
     private void initFactories() {
-        EventFactory.getInstance().loadAllEvents();
+        EventFactory.getInstance().loadAllEvents(false);
     }
 
     private void registerListeners() {

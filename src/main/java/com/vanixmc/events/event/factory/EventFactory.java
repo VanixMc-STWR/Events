@@ -35,13 +35,20 @@ public class EventFactory {
         Chat.log("Loaded event: " + id);
     }
 
-    public void loadAllEvents() {
+    public void loadAllEvents(boolean replace) {
         for (String fileName : fileManager.listFileNames()) {
-            loadEvent(fileName);
+            Event event = loadEvent(fileName);
+
+            if (replace) {
+                Event replacedEvent = eventMap.replace(fileName, event);
+                replacedEvent.getTriggerHolder().unsubscribeAll(replacedEvent);
+                continue;
+            }
+            register(fileName, event);
         }
     }
 
-    public void loadEvent(String fileName) {
+    public Event loadEvent(String fileName) {
         Map<String, Object> data = fileManager.load(fileName);
         DomainConfig config = new DomainConfig(data);
 
@@ -68,7 +75,7 @@ public class EventFactory {
         event.getActionHolder().populate(actionHolder);
         event.getTriggerHolder().populate(triggerHolder);
 
-        register(fileName, event);
+        return event;
     }
 
     public Collection<ZoneEvent> getZoneEvents() {

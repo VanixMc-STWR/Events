@@ -76,7 +76,7 @@ public class MessageAction extends AbstractAction {
     private Collection<Player> determineRecipients(Context context) {
         switch (audience) {
             case PLAYER:
-                Player audienceEntity = getAudienceEntity(context);
+                Player audienceEntity = getPlayerFromContext(context);
                 return Collections.singletonList(audienceEntity);
             case ALL:
                 return new HashSet<>(getGlobalScopePlayers());
@@ -121,17 +121,5 @@ public class MessageAction extends AbstractAction {
             }
             return new MessageAction(format, message, audience);
         };
-    }
-
-    private Player getAudienceEntity(Context context) {
-        if (context.getPlayer() != null) {
-            return context.getPlayer();
-        }
-
-        if (context.getEntity() != null && context.getEntity() instanceof Player player) {
-            return player;
-        }
-
-        throw new RuntimeException("Player is null in event context for PLAYER audience. (MessageAction)");
     }
 }
