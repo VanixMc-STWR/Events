@@ -58,9 +58,7 @@ public class MessageAction extends AbstractAction {
         String parsedSubtitle = event.getPersistentData().replaceVariables(this.subtitle);
 
         Collection<Player> recipients = determineRecipients(context);
-        if (recipients.isEmpty()) {
-            return false;
-        }
+        if (recipients.isEmpty()) return false;
 
         for (Player recipient : recipients) {
             if (format == MessageFormat.TITLE) {

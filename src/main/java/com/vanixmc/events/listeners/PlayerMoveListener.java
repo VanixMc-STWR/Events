@@ -32,8 +32,11 @@ public class PlayerMoveListener implements Listener {
 
     private void triggerRegionEnterEvent(Player player, ApplicableRegionSet regions) {
         regions.getRegions()
-                .forEach(region -> new RegionInteractionEvent(RegionInteractionType.ENTER,
-                        region, player).call());
+                .forEach(region -> {
+                    if (RegionUtils.isLocationInRegion(player.getLocation(), region)) return;
+                    new RegionInteractionEvent(RegionInteractionType.ENTER,
+                            region, player).call();
+                });
     }
 
     private void triggerRegionExitEvent(Player player, Location toLocation, ApplicableRegionSet regions) {

@@ -1,7 +1,5 @@
 package com.vanixmc.events.shared;
 
-import com.ibm.icu.util.TimeUnitAmount;
-import com.vanixmc.events.exceptions.NoBuilderDefinedException;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.Location;
@@ -117,7 +115,7 @@ public class DomainConfig {
 
         if (value == null) return null;
 
-        String tickTimeString = (String)value;
+        String tickTimeString = (String) value;
 
         //  regex separates digits from letters,
         //  and reads regardless of whitespace.
@@ -147,42 +145,14 @@ public class DomainConfig {
      *
      * @return The TimeUnit object containing the desired time measurement as its unit.
      */
-    public TimeUnit parseTimeUnit(String unit) {
+    private TimeUnit parseTimeUnit(String unit) {
         return switch (unit) {
             case "ms", "millisecond", "milliseconds" -> TimeUnit.MILLISECONDS;
-            case "s", "second", "seconds"             -> TimeUnit.SECONDS;
-            case "m", "minute", "minutes"             -> TimeUnit.MINUTES;
-            case "h", "hour", "hours"                 -> TimeUnit.HOURS;
-            case "d", "day", "days"                   -> TimeUnit.DAYS;
+            case "s", "second", "seconds" -> TimeUnit.SECONDS;
+            case "m", "minute", "minutes" -> TimeUnit.MINUTES;
+            case "h", "hour", "hours" -> TimeUnit.HOURS;
+            case "d", "day", "days" -> TimeUnit.DAYS;
             default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
         };
-    }
-
-    /**
-     * Retrieves the amount of repetitions from config section "repetitions".
-     *
-     * @throws IllegalArgumentException for invalid input.
-     * @return the amount of repetitions and '-1' for infinite repetitions.
-     */
-    public int parseRepetitions() {
-
-        String repetitions = getString("repetitions");
-
-        if (repetitions.equalsIgnoreCase("inf") ||
-            repetitions.equalsIgnoreCase("infinity")) {
-            return -1;
-        }
-
-        int repetition;
-
-        try {
-            repetition = Integer.parseInt(repetitions);
-        } catch(NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid repetition entry: %s, entry requires an integer, 'inf', or 'infinity'");
-        }
-
-        if (repetition <= 0) throw new IllegalArgumentException("Invalid repetition entry: %s, if integer value, entry must be a positive non-zero integer.");
-
-        return repetition;
     }
 }

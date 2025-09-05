@@ -15,7 +15,8 @@ public class RegionInteractListener implements Listener {
         switch (event.getRegionInteractionType()) {
             case ENTER -> eventFactory.getZoneEvents()
                     .forEach(zoneEvent -> {
-                        if (!zoneEvent.getRegionId().equals(event.getEnteredRegion().getId())) return;
+                        String regionId = zoneEvent.getRegionId();
+                        if (!regionId.equals(event.getEnteredRegion().getId())) return;
                         zoneEvent.onEnter(event.getPlayer().getUniqueId());
                     });
             case EXIT -> eventFactory.getZoneEvents()

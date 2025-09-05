@@ -43,6 +43,7 @@ public abstract class AbstractTrigger implements Trigger {
         subscribersClone.forEach(triggerable -> {
             // Only proceed if the triggerable is still in the subscribers list
             if (subscribers.contains(triggerable)) {
+                context.setTrigger(this);
                 context.setTriggerable(triggerable);
                 boolean triggered = triggerable.trigger(context);
                 if (!triggered) return;

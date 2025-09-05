@@ -1,26 +1,14 @@
 package com.vanixmc.events.trigger_tests;
 
-import com.sk89q.worldguard.domains.Domain;
 import com.vanixmc.events.shared.DomainConfig;
 import com.vanixmc.events.shared.TickTime;
-import com.vanixmc.events.trigger.factory.TriggerFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RecurringTriggerTest {
-
-    private TriggerFactory triggerFactory;
-
-    @BeforeEach
-    public void initFactory() {
-        this.triggerFactory = new TriggerFactory();
-    }
-
     @Test
     public void testSuccessfulRegexParsingMilliseconds() {
         DomainConfig domainConfig = new DomainConfig();
@@ -161,7 +149,6 @@ public class RecurringTriggerTest {
         System.out.println(testDay);
         System.out.println(testD);
 
-
         assertEquals(3, testDays.getDuration());
         assertEquals(TimeUnit.DAYS, testDays.getTimeUnit());
 
@@ -171,43 +158,4 @@ public class RecurringTriggerTest {
         assertEquals(3, testD.getDuration());
         assertEquals(TimeUnit.DAYS, testD.getTimeUnit());
     }
-
-    @Test
-    public void testSuccessfulRegexParsingRepetitions() {
-        DomainConfig domainConfig = new DomainConfig();
-
-        domainConfig.getConfig().put("repetitions", "3");
-
-        assertEquals(3, domainConfig.parseRepetitions());
-    }
-
-    @Test
-    public void testSuccessfulExceptionForNegativeRepetitions() {
-        DomainConfig domainConfig = new DomainConfig();
-
-        domainConfig.getConfig().put("repetitions", "-3");
-
-        assertThrows(IllegalArgumentException.class, domainConfig::parseRepetitions);
-    }
-
-    @Test
-    public void testSuccessfulExceptionFor0Repetitions() {
-        DomainConfig domainConfig = new DomainConfig();
-
-        domainConfig.getConfig().put("repetitions", "0");
-
-        assertThrows(IllegalArgumentException.class, domainConfig::parseRepetitions);
-    }
-
-    @Test
-    public void testSuccessfulParsingRepetitionsInf() {
-        DomainConfig domainConfig = new DomainConfig();
-
-        domainConfig.getConfig().put("repetitions", "inf");
-
-        assertEquals(-1, domainConfig.parseRepetitions());
-    }
-
-
-
 }
