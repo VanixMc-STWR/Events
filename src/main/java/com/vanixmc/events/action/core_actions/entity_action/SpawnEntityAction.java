@@ -3,6 +3,9 @@ package com.vanixmc.events.action.core_actions.entity_action;
 import com.vanixmc.events.EventsPlugin;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.context.Context;
+import com.vanixmc.events.shared.ConfigBuilder;
+import com.vanixmc.events.shared.DomainConfig;
+import com.vanixmc.events.util.EntityUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -34,16 +37,22 @@ public class SpawnEntityAction extends AbstractAction {
 
         if (!Objects.equals(location.getWorld(), contextWorld)) return false;
 
-        new BukkitRunnable() {
+        if (!entityType.isRegistered()) return false;
 
-            @Override
-            public void run() {
-
-            }
-        }.runTaskTimer(EventsPlugin, 0, 0.5);
-
-
+        for (int i = 0; i < amount; i++) {
+            contextWorld.spawn(location, entityType.getEntityClass());
+        }
 
         return false;
+    }
+
+    public static ConfigBuilder<AbstractAction> builder() {
+        return config -> {
+            String entityTypeString = config.getString("entity_type");
+
+            if (!EntityUtils.isValidEntityType(entityTypeString)) return false;
+
+            EntityType entityType = EntityType.
+        };
     }
 }
