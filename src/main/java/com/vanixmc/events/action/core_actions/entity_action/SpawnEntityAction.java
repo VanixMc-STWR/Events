@@ -1,35 +1,31 @@
 package com.vanixmc.events.action.core_actions.entity_action;
-
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.vanixmc.events.EventsPlugin;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
-import com.vanixmc.events.shared.DomainConfig;
 import com.vanixmc.events.util.EntityUtils;
 import com.vanixmc.events.util.RegionUtils;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.plaf.synth.Region;
-import java.util.Objects;
 import java.util.Optional;
 
+@Getter
 public class SpawnEntityAction extends AbstractAction {
     private final EntityType entityType;
+    private final Location location;
     @Nullable
     private final String name;
-    private final Location location;
     private final int amount;
 
-    public SpawnEntityAction(EntityType entityType, @Nullable String name, Location location, int amount) {
+    public SpawnEntityAction(EntityType entityType, Location location, @Nullable String name, int amount) {
         this.entityType = entityType;
-        this.name = name;
         this.location = location;
+        this.name = name;
         this.amount = amount;
     }
 
@@ -37,30 +33,24 @@ public class SpawnEntityAction extends AbstractAction {
 
     @Override
     public boolean execute(Context context) {
-        World contextWorld = context.getLocation().getWorld();
-
-        if (!Objects.equals(location.getWorld(), contextWorld)) return false;
-
-        if (!entityType.isRegistered()) return false;
-
         for (int i = 0; i < amount; i++) {
-            contextWorld.spawn(location, entityType.getEntityClass());
+            Entity entity = location.getWorld().spawn(location, entityType.getEntityClass());
+            if (name != null) entity.setCustomName(name);
         }
-
-        return false;
+        return true;
     }
 
     public static ConfigBuilder<AbstractAction> builder() {
         return config -> {
-            String worldName = config.getString("world");
+            String worldName = config.getString("world-name");
             if (worldName.isEmpty()) {
                 throw new IllegalArgumentException("world-name cannot be null or empty.");
             }
 
             World world = Bukkit.getWorld(worldName);
-
             if (world == null) {
-                throw new IllegalArgumentException("Invalid world-name value; no corresponding world.");
+                throw new IllegalArgumentException(
+                        String.format("Invalid world-name value; no corresponding world for %s.", worldName));
             }
 
             String regionId = config.getString("region-id");
@@ -73,27 +63,25 @@ public class SpawnEntityAction extends AbstractAction {
                 throw new IllegalArgumentException("Invalid region-id value; no corresponding region.");
             }
 
-            //  TODO: Determine error handling.
             Location location = RegionUtils.getLocationByRegion(world, region.get());
+            //  to ensure that entity spawns at surface level.
+            int y = world.getHighestBlockYAt(location.getBlockX(), location.getBlockZ());
+            location.setY(y + 1);
 
-            String entityTypeString = config.getString("entity_type");
+            String entityTypeString = config.getString("entity-type");
 
-            if (!EntityUtils.isValidEntityType(entityTypeString)) {
+            if (!EntityUtils.isValidEntityType(entityTypeString.toUpperCase())) {
                 throw new IllegalArgumentException("Invalid entity type.");
             }
 
             EntityType entityType = EntityType.valueOf(entityTypeString
                     .toUpperCase().trim());
 
+            String name = config.getString("name");
+
             int amount = config.getInt("amount");
 
-            String customName = null;
-
-            if (config.getConfig().containsKey("name")) {
-                customName = config.getString("name");
-            }
-
-            return new SpawnEntityAction(entityType, customName, location, amount);
+            return new SpawnEntityAction(entityType, location, name, amount);
         };
     }
 }

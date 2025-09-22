@@ -1,0 +1,15 @@
+type: zone
+region-id: "test"
+triggers:
+  - type: "region_interact"
+    region-id: "test"
+    interaction: enter
+    mode:
+      type: "5"
+actions:
+  - type: "spawn_entity"
+    world-name: "world"
+    region-id: "test"
+    entity-type: "zombie"
+    name: "frank"
+    amount: 1
