@@ -3,10 +3,7 @@ package com.vanixmc.events.context;
 import com.vanixmc.events.event.domain.Event;
 import com.vanixmc.events.trigger.domain.Trigger;
 import com.vanixmc.events.trigger.domain.Triggerable;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -21,6 +18,8 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class Context {
     private Player player;
