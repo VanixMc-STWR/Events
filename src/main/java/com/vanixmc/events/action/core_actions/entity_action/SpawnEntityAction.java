@@ -5,6 +5,9 @@ import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.EntityUtils;
 import com.vanixmc.events.util.RegionUtils;
+import io.lumine.mythic.api.mobs.MythicMob;
+import io.lumine.mythic.bukkit.BukkitAdapter;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,26 +19,48 @@ import java.util.Optional;
 
 @Getter
 public class SpawnEntityAction extends AbstractAction {
+
+    private enum MobType {MYTHIC, BUKKIT}
+
+    private final MobType mobType;
     private final EntityType entityType;
+    private final MythicMob mythicMob;
     private final Location location;
     @Nullable
     private final String name;
     private final int amount;
 
     public SpawnEntityAction(EntityType entityType, Location location, @Nullable String name, int amount) {
+        this.mobType = MobType.BUKKIT;
         this.entityType = entityType;
+        this.mythicMob = null;
         this.location = location;
         this.name = name;
         this.amount = amount;
     }
 
-    //TODO: Constructor for MythicMobs Id here>>>
+    public SpawnEntityAction(MythicMob mythicMob, Location location, @Nullable String name, int amount) {
+        this.mobType = MobType.MYTHIC;
+        this.mythicMob = mythicMob;
+        this.entityType = null;
+        this.location = location;
+        this.name = name;
+        this.amount = amount;
+    }
 
     @Override
     public boolean execute(Context context) {
-        for (int i = 0; i < amount; i++) {
-            Entity entity = location.getWorld().spawn(location, entityType.getEntityClass());
-            if (name != null) entity.setCustomName(name);
+        switch (mobType) {
+            case MYTHIC:
+                for (int i = 0; i < amount; i++) {
+                    ActiveMob active = mythicMob.spawn(BukkitAdapter.adapt(location),1);
+                    active.setDisplayName(name);
+                }
+            case BUKKIT:
+                for (int i = 0; i < amount; i++) {
+                    Entity spawnedEntity = location.getWorld().spawnEntity(location, entityType);
+                    if (name != null) spawnedEntity.setCustomName(name);
+                }
         }
         return true;
     }
@@ -68,20 +93,24 @@ public class SpawnEntityAction extends AbstractAction {
             int y = world.getHighestBlockYAt(location.getBlockX(), location.getBlockZ());
             location.setY(y + 1);
 
-            String entityTypeString = config.getString("entity-type");
-
-            if (!EntityUtils.isValidEntityType(entityTypeString.toUpperCase())) {
-                throw new IllegalArgumentException("Invalid entity type.");
-            }
-
-            EntityType entityType = EntityType.valueOf(entityTypeString
-                    .toUpperCase().trim());
-
             String name = config.getString("name");
 
             int amount = config.getInt("amount");
 
-            return new SpawnEntityAction(entityType, location, name, amount);
+            String entityId = config.getString("entity-type");
+
+            //  check if id corresponds to MythicMob
+            Optional<MythicMob> mythicMob = EntityUtils.getMythicMob(entityId);
+            if (mythicMob.isPresent()) {
+                return new SpawnEntityAction(mythicMob.get(), location, name, amount);
+            }
+
+            Optional<EntityType> entityType = EntityUtils.getVanillaEntityType(entityId);
+            if (entityType.isEmpty()) {
+                throw new IllegalArgumentException("Invalid entity id; no corresponding entity.");
+            }
+
+            return new SpawnEntityAction(entityType.get(), location, name, amount);
         };
     }
 }
