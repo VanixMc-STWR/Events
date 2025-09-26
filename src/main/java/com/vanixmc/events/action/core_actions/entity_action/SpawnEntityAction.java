@@ -97,6 +97,10 @@ public class SpawnEntityAction extends AbstractAction {
 
             int amount = config.getInt("amount");
 
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Invalid amount value; must be greater than zero.");
+            }
+
             String entityId = config.getString("entity-type");
 
             //  check if id corresponds to MythicMob
