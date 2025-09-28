@@ -7,6 +7,7 @@ import com.vanixmc.events.action.core_actions.money_action.BankOperationAction;
 import com.vanixmc.events.action.domain.AbstractAction;
 import com.vanixmc.events.action.domain.Action;
 import com.vanixmc.events.action.domain.ActionHolder;
+import com.vanixmc.events.action.particle_action.SpawnParticleAction;
 import com.vanixmc.events.condition.domain.ConditionHolder;
 import com.vanixmc.events.condition.factory.ConditionFactory;
 import com.vanixmc.events.event.domain.Event;
@@ -72,6 +73,7 @@ public class ActionFactory extends AbstractFactory<AbstractAction, Action> {
         registerBuilder(BuilderKey.of("give_item", "item_give", "give_i"), GiveItemAction.builder());
         registerBuilder(BuilderKey.of("play_sound", "play_s", "ps"), PlaySoundAction.builder());
         registerBuilder(BuilderKey.of("bank_operation", "bank", "money", "$"), BankOperationAction.builder());
+        registerBuilder(BuilderKey.of("spawn_particle", "particle", "sp_p"), SpawnParticleAction.builder());
     }
 
     @Override
