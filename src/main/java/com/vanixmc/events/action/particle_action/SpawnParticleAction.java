@@ -6,12 +6,7 @@ import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.util.RegionUtils;
 import hm.zelha.particlesfx.particles.ParticleCrit;
 import hm.zelha.particlesfx.particles.parents.Particle;
-import hm.zelha.particlesfx.shapers.ParticleCircle;
-import hm.zelha.particlesfx.shapers.ParticlePolygon;
-import hm.zelha.particlesfx.shapers.ParticleSphere;
-import hm.zelha.particlesfx.shapers.parents.Shape;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -47,6 +42,10 @@ public class SpawnParticleAction extends AbstractAction {
             }
 
             Optional<ProtectedRegion> region = RegionUtils.getRegionById(world, regionId);
+
+            if (region.isEmpty()) {
+                throw new IllegalArgumentException("Invalid region-id value; no corresponding region.");
+            }
 
             Location location = RegionUtils.getLocationByRegion(world, region.get());
 
