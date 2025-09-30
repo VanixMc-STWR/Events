@@ -76,8 +76,6 @@ public class RegionUtils {
         BlockVector3 min = region.getMinimumPoint();
         BlockVector3 max = region.getMaximumPoint();
 
-        Bukkit.getLogger().info("Min: " + min + ", Max: " + max);
-
         //  acquires the location's center, float values are
         //  for offsetting from corner to center of block.
 
