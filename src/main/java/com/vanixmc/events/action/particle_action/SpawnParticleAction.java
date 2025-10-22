@@ -65,6 +65,10 @@ public class SpawnParticleAction extends AbstractAction {
 
             int amount = config.getInt("amount");
 
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Invalid particle amount; must be greater than 0.");
+            }
+
             return new SpawnParticleAction(world, location, particle.get(), amount);
         };
     }
