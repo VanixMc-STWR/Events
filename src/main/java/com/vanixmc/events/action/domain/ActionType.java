@@ -4,5 +4,6 @@ public enum ActionType {
     PLAYER_MESSAGE,
     COMMAND,
     GIVE_ITEM,
-    PLAY_SOUND
+    PLAY_SOUND,
+    SPAWN_ENTITY
 }
