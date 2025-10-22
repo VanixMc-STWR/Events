@@ -5,7 +5,6 @@ import com.vanixmc.events.commands.EventsCommand;
 import com.vanixmc.events.event.factory.EventFactory;
 import com.vanixmc.events.listeners.PlayerMoveListener;
 import com.vanixmc.events.listeners.RegionInteractListener;
-import hm.zelha.particlesfx.util.ParticleSFX;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.PluginManager;
@@ -27,7 +26,6 @@ public final class EventsPlugin extends JavaPlugin {
         registerCommands();
         registerListeners();
         setupEconomy();
-        ParticleSFX.setPlugin(this);
     }
 
     @Override

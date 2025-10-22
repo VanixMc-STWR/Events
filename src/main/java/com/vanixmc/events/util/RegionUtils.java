@@ -70,4 +70,19 @@ public class RegionUtils {
                         location.getZ()
                 ));
     }
+
+    public static Location getLocationByRegion(World world, ProtectedRegion region) {
+
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 max = region.getMaximumPoint();
+
+        //  acquires the location's center, float values are
+        //  for offsetting from corner to center of block.
+
+        double centerX = (min.x() + max.x()) / 2.0;
+        double centerY = (min.y() + max.y()) / 2.0;
+        double centerZ = (min.z() + max.z()) / 2.0;
+
+        return new Location(world, centerX, centerY, centerZ);
+    }
 }
