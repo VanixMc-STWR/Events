@@ -40,28 +40,13 @@ public class SpawnParticleAction extends AbstractAction {
 
             World world = Bukkit.getWorld(worldName);
 
-            String regionId = config.getString("region-id");
-            if (regionId == null) {
-                throw new IllegalArgumentException("region-id cannot be null or empty.");
-            }
+            int x = config.getInt("x");
+            int y = config.getInt("y");
+            int z = config.getInt("z");
 
-            Optional<ProtectedRegion> region = RegionUtils.getRegionById(world, regionId);
+            Location location = new Location(world, x, y, z);
 
-            if (region.isEmpty()) {
-                throw new IllegalArgumentException("Invalid region-id value; no corresponding region.");
-            }
-
-            Location location = RegionUtils.getLocationByRegion(world, region.get());
-            int y = world.getHighestBlockYAt(location.getBlockX(), location.getBlockZ());
-            location.setY(y+2);
-
-            String particleName = config.getString("particle");
-
-            Optional<Particle> particle = Optional.of(Particle.valueOf(particleName));
-
-            if (particle.isEmpty()) {
-                throw new IllegalArgumentException("Invalid particle argument; must be a valid particle type.");
-            }
+            Particle particle = Particle.valueOf(config.getString("particle"));
 
             int amount = config.getInt("amount");
 
@@ -69,7 +54,7 @@ public class SpawnParticleAction extends AbstractAction {
                 throw new IllegalArgumentException("Invalid particle amount; must be greater than 0.");
             }
 
-            return new SpawnParticleAction(world, location, particle.get(), amount);
+            return new SpawnParticleAction(world, location, particle, amount);
         };
     }
 }
