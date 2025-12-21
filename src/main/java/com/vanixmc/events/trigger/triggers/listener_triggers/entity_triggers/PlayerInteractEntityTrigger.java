@@ -2,11 +2,15 @@ package com.vanixmc.events.trigger.triggers.listener_triggers.entity_triggers;
 
 import com.vanixmc.events.action.domain.ActionType;
 import com.vanixmc.events.context.Context;
+import com.vanixmc.events.shared.ConfigBuilder;
+import com.vanixmc.events.trigger.domain.AbstractTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.ListenerTrigger;
+import com.vanixmc.events.util.Chat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 public class PlayerInteractEntityTrigger extends ListenerTrigger {
 
@@ -27,17 +31,21 @@ public class PlayerInteractEntityTrigger extends ListenerTrigger {
     @EventHandler
     public void onInteract(PlayerInteractEntityEvent event) {
 
-        Entity interactedEntity = event.getRightClicked();
+        //  to prevent firing twice.
+
+        if (event.getHand() != EquipmentSlot.HAND) return;
 
         //  determine if the event's entity matches the required entity for this
         //  trigger.
 
+        Entity interactedEntity = event.getRightClicked();
+
+        if (interactedEntity.getCustomName() == null) return;
+
         if (interactedEntity.getType() != interactedEntityType
-            || !interactedEntity.getName().equals(interactedEntityName)) {
+            || !interactedEntity.getCustomName().equals(interactedEntityName)) {
             return;
         }
-
-        //  TODO: determine the action type correspondence with the event.
 
         fire(Context.builder()
                 .player(event.getPlayer())
@@ -46,6 +54,48 @@ public class PlayerInteractEntityTrigger extends ListenerTrigger {
                 .bukkitEvent(event)
                 .build());
 
+    }
+
+    public static ConfigBuilder<AbstractTrigger> builder() {
+        return domainConfig -> {
+
+            String interactedEntityTypeString = domainConfig.getUppercaseString("entity-type");
+
+            String interactedEntityNameString = domainConfig.getString("entity-name");
+
+            String actionTypeString = domainConfig.getUppercaseString("action-type");
+
+            EntityType interactedEntityType;
+
+            try {
+
+                interactedEntityType = EntityType.valueOf(interactedEntityTypeString);
+
+            } catch (IllegalArgumentException e) {
+
+                Chat.log("Invalid entity type argument " + interactedEntityTypeString);
+
+                throw e;
+
+            }
+
+            ActionType actionType;
+
+            try {
+
+                actionType = ActionType.valueOf(actionTypeString);
+
+            } catch (IllegalArgumentException e) {
+
+                Chat.log("Invalid action type argument " + actionTypeString);
+
+                throw e;
+
+            }
+
+            return new PlayerInteractEntityTrigger(interactedEntityType,
+                    actionType, interactedEntityNameString);
+        };
     }
 
 }
