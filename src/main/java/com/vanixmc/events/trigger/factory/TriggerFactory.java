@@ -10,7 +10,7 @@ import com.vanixmc.events.trigger.domain.TriggerHolder;
 import com.vanixmc.events.trigger.domain.Triggerable;
 import com.vanixmc.events.trigger.trigger_modes.TriggerMode;
 import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
-import com.vanixmc.events.trigger.triggers.listener_triggers.EntityKilledTrigger;
+import com.vanixmc.events.trigger.triggers.listener_triggers.entity_triggers.EntityKilledTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.PlayerInteractTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.region_trigger.RegionInteractTrigger;
 import lombok.Getter;
