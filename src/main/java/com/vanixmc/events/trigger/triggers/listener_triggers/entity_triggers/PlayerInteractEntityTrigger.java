@@ -11,20 +11,22 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayerInteractEntityTrigger extends ListenerTrigger {
 
-    private final EntityType interactedEntityType;
+    private final EntityType entityType;
 
     private final ActionType actionType;
 
-    private final String interactedEntityName;
+    @Nullable
+    private final String entityName;
 
-    public PlayerInteractEntityTrigger(EntityType interactedEntityType,
+    public PlayerInteractEntityTrigger(EntityType entityType,
                                        ActionType actionType,
-                                       String interactedEntityName) {
-        this.interactedEntityType = interactedEntityType;
-        this.interactedEntityName = interactedEntityName;
+                                       @Nullable String entityName) {
+        this.entityType = entityType;
+        this.entityName = entityName;
         this.actionType = actionType;
     }
 
@@ -40,10 +42,12 @@ public class PlayerInteractEntityTrigger extends ListenerTrigger {
 
         Entity interactedEntity = event.getRightClicked();
 
-        if (interactedEntity.getCustomName() == null) return;
+        String interactedEntityName = interactedEntity.getCustomName();
 
-        if (interactedEntity.getType() != interactedEntityType
-            || !interactedEntity.getCustomName().equals(interactedEntityName)) {
+        if (interactedEntity.getType() != entityType) return;
+
+        if (interactedEntityName != null && entityName != null &&
+                !interactedEntityName.equals(entityName)) {
             return;
         }
 
