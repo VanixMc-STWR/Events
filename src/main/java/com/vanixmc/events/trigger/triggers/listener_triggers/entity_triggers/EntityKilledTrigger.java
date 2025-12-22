@@ -1,8 +1,9 @@
-package com.vanixmc.events.trigger.triggers.listener_triggers;
+package com.vanixmc.events.trigger.triggers.listener_triggers.entity_triggers;
 
 import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.trigger.domain.AbstractTrigger;
+import com.vanixmc.events.trigger.triggers.listener_triggers.ListenerTrigger;
 import com.vanixmc.events.util.Chat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
