@@ -13,6 +13,7 @@ import com.vanixmc.events.trigger.trigger_modes.factory.TriggerModeFactory;
 import com.vanixmc.events.trigger.triggers.listener_triggers.entity_triggers.EntityKilledTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.PlayerInteractTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.entity_triggers.PlayerInteractEntityTrigger;
+import com.vanixmc.events.trigger.triggers.listener_triggers.entity_triggers.PlayerJoinTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.region_trigger.RegionInteractTrigger;
 import lombok.Getter;
 
@@ -30,6 +31,7 @@ public class TriggerFactory extends AbstractFactory<AbstractTrigger, Trigger> {
         registerBuilder(BuilderKey.of("player_interact", "p_interact"), PlayerInteractTrigger.builder());
         registerBuilder(BuilderKey.of("entity_kill_entity", "e_kill_e"), EntityKilledTrigger.builder());
         registerBuilder(BuilderKey.of("player_interact_entity", "p_interact_e"), PlayerInteractEntityTrigger.builder());
+        registerBuilder(BuilderKey.of("player_join", "p_join"), PlayerJoinTrigger.builder());
     }
 
     @Override

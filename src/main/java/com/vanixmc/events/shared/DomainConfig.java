@@ -94,6 +94,11 @@ public class DomainConfig {
         return Collections.emptyList();
     }
 
+    public static boolean isValidBoolean(String arg) {
+        return "true".equalsIgnoreCase(arg) ||
+                "false".equalsIgnoreCase(arg);
+    }
+
     // Bukkit object methods
 
     public Location getLocation(String key) {
