@@ -1,10 +1,13 @@
 package com.vanixmc.events.trigger.triggers.listener_triggers.block_triggers;
 
+import com.vanixmc.events.context.Context;
 import com.vanixmc.events.shared.ConfigBuilder;
 import com.vanixmc.events.trigger.domain.AbstractTrigger;
 import com.vanixmc.events.trigger.triggers.listener_triggers.ListenerTrigger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
@@ -22,9 +25,31 @@ public class BlockBreakTrigger extends ListenerTrigger {
         this.toolInHand = toolInHand;
     }
 
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Material block = event.getBlock().getType();
+
+        if (!block.equals(blockType)) return;
+
+        if (toolInHand != null) {
+
+            Material tool = event.getPlayer()
+                    .getInventory()
+                    .getItemInMainHand()
+                    .getType();
+
+            if (!tool.equals(toolInHand)) return;
+        }
+
+        fire(Context.builder()
+                .player(event.getPlayer())
+                .bukkitEvent(event)
+                .build());
+    }
+
     private static boolean isTool(Material material) {
 
-        String materialName = material.getData().getName();
+        String materialName = material.name();
 
         //  determine if the material corresponds to armor.
 
@@ -35,7 +60,7 @@ public class BlockBreakTrigger extends ListenerTrigger {
             materialName.equals("ELYTRA") ||
             materialName.equals("TURTLE_HELMET"))
         {
-            return true;
+            return false;
         }
 
         //  determine if the material corresponds to an item of type Damageable.
@@ -67,10 +92,10 @@ public class BlockBreakTrigger extends ListenerTrigger {
             String toolParam = config.getString("tool_in_hand");
 
             if (toolParam.isEmpty()) {
-                throw new IllegalArgumentException("Invalid 'tool_in_hand' parameter - must provide a tool name.");
+                return new BlockBreakTrigger(blockType.get(), null);
             }
 
-            Optional<Material> toolType = Optional.ofNullable(Material.getMaterial(toolParam));
+            Optional<Material> toolType = Optional.ofNullable(Material.getMaterial(toolParam.toUpperCase()));
 
             if (toolType.isEmpty()) {
                 throw new IllegalArgumentException("Invalid 'tool_in_hand' parameter - must provide a valid tool name.");
